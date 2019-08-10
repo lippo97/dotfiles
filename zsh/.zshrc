@@ -1,6 +1,6 @@
 export ZSH="/home/filo/.oh-my-zsh"
-source $ZSH/oh-my-zsh.sh
 ZSH_THEME="gitster"
+source $ZSH/oh-my-zsh.sh
 
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
