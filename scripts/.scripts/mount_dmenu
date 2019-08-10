@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+font="xos4 Terminus:style=Regular:size=10"
+colorbg="#2b303b"
+colorfg="#727b84"
+colorselbg="#2b303b"
+colorselfg="#a7adba"
+
+eject=""
+mount=""
+
+
+windows[1]="windows"
+windows[0]="$(mount | grep "${windows[1]}" --quiet && echo "$eject" || echo "$mount")windows"
+usb_drive[1]="usbdrive"
+usb_drive[0]="usb drive"
+
+list="${windows[0]}\n${usb_drive[0]}"
+action=$(echo -e "$list" | dmenu -p 'Choose action:' -fn "$font" -nb "$colorbg" -nf "$colorfg" \
+  -sb "$colorselbg" -sf "$colorselfg")
+
+case $action in
+  "${windows}" )
+    echo ${windows[1]}
+    ;;
+  "${usb_drive}" )
+    echo ${usb_drive}
+    ;;
+  cancel )
+    ;;
+esac

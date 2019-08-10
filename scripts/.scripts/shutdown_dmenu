@@ -1,0 +1,27 @@
+#!/bin/bash
+
+font="mononoki:style=Regular:size=10"
+theme=$(cat ~/.cache/wal/colors)
+colorbg="#282a2e"
+colorfg=$(echo $theme | cut -d " " -f 16)
+colorselbg=$colorbg
+colorselfg=$(echo $theme | cut -d " " -f 4)
+
+action=$(dmenu -i -h 20 -p 'choose action:' -fn "$font" -nb "$colorbg" -nf "$colorfg" \
+  -sb "$colorselbg" -sf "$colorselfg" << EOF
+cancel
+reboot
+shutdown
+EOF
+)
+case $action in
+  shutdown )
+    shutdown -h now
+    ;;
+  reboot )
+    reboot
+    ;;
+  cancel )
+    ;;
+esac
+

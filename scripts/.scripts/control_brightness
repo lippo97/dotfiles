@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+mode=$1
+
+UNACCURATE_STEP=5
+ACCURATE_STEP=1
+CURRENT_BRIGHTNESS="xbacklight"
+
+current=$(eval "$CURRENT_BRIGHTNESS")
+if [[ (( $current >= 20 )) && $mode == "raise" ]]; then
+    STEP=$UNACCURATE_STEP
+else
+    STEP=$ACCURATE_STEP
+fi
+
+RAISE_BRIGHTNESS="xbacklight -inc $STEP -time 0"
+LOWER_BRIGHTNESS="xbacklight -dec $STEP -time 0"
+
+case $mode in
+    "raise")
+        eval "$RAISE_BRIGHTNESS"
+        icon=brighness
+        ;;
+    "lower")
+        eval "$LOWER_BRIGHTNESS"
+        ;;
+    *)
+        echo "Usage: $0 <raise|lower>"
+esac
+
+current=$(eval "$CURRENT_BRIGHTNESS")
+
+brightnessId=$(cat /home/filo/.scripts/dunstids/brightness)
+appName="Brightness Control"
+defaults="-u low -r $brightnessId"
+summary="Brightness: $brightness"
+
+body="$(getProgressString 20 '<b>■</b>' ' ' $brightness)"
+dunstify -a "Volume Control" $defaults -i $icon \
+    "$summary" "$body" \
+    -t 1000
