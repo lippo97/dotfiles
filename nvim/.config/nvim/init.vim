@@ -54,6 +54,7 @@ Plugin 'christoomey/vim-tmux-navigator'
 
 " Vim-fuigitive
 Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-dispatch'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
