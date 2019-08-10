@@ -45,13 +45,15 @@ Plugin 'pangloss/vim-javascript'
 " Syntax highlight and indent for jsx
 Plugin 'maxmellon/vim-jsx-pretty'
 
-
 " Colorschemes
 Plugin 'morhetz/gruvbox'
 Plugin 'tomasr/molokai'
 
 " Tmux navigation
 Plugin 'christoomey/vim-tmux-navigator'
+
+" Vim-fuigitive
+Plugin 'tpope/vim-fugitive'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
