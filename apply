@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+on="link"
+off="unlink"
+
+function usage() {
+    echo "Usage: $0 <$on|$off>"
+}
+
+if (( $# != 1 )); then
+    usage
+    exit 1
+fi
+
+case $1 in
+    "$on")
+        command="stow -v"
+        ;;
+    "$off")
+        command="stow -D -v"
+        ;;
+    *)
+        usage
+        exit
+        ;;
+esac
+
+# Find all directories in the current directory that doesn't start with ".".
+dirs=$(find -maxdepth 1 -mindepth 1 -type d -not -name '.*' -printf '%f\n')
+# Then call GNU Stow for each one.
+for x in $dirs; do
+    eval "$command $x"
+done
