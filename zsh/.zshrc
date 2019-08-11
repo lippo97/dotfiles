@@ -1,6 +1,6 @@
 export ZSH="/home/filo/.oh-my-zsh"
 ZSH_THEME="gitster"
-plugins=(git common-aliases)
+plugins=(git common-aliases npm node gradle )
 source $ZSH/oh-my-zsh.sh
 
 source /usr/share/fzf/key-bindings.zsh

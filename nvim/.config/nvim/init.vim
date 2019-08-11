@@ -187,8 +187,8 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Remap for do codeAction of current line
-" TODO: un giorno devo capirlo
- nmap <leader>ac <Plug>(coc-codeaction)
+ "nmap <leader>ac <Plug>(coc-codeaction)
+ nmap <leader>ac :CocAction<cr>
 
 " Remap for do action format
 "nmap <silent> F <Plug>(coc-action-format) "does not work
