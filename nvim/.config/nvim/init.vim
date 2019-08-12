@@ -23,6 +23,8 @@ Plugin 'junegunn/fzf.vim'
 " Surround and repeat by tpope
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
+" Argument text-object support
+Plugin 'inkarkat/argtextobj.vim'
 " Codi
 Plugin 'metakirby5/codi.vim'
 " VimWiki
@@ -126,16 +128,12 @@ nnoremap <silent> <c-k> :TmuxNavigateUp<cr>
 nnoremap <silent> <c-l> :TmuxNavigateRight<cr>
 nnoremap <silent> <c-/> :TmuxNavigatePrevious<cr>
 
-"nnoremap <c-h> <c-w>h
-"nnoremap <c-j> <c-w>j
-"nnoremap <c-k> <c-w>k
-"nnoremap <c-l> <c-w>l
-
 vnoremap < <gv
 vnoremap > >gv
 """ Fzf
 nnoremap <c-p> :Files<cr>
 nnoremap <c-b> :Buffers<cr>
+nnoremap <c-m> :Rg<cr>
 """ Netrw
 "let g:netrw_banner = 0
 "let g:netrw_liststyle = 3
@@ -187,8 +185,7 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
 " Remap for do codeAction of current line
- "nmap <leader>ac <Plug>(coc-codeaction)
- nmap <leader>ac :CocAction<cr>
+ nmap <leader>ac <Plug>(coc-codeaction)
 
 " Remap for do action format
 "nmap <silent> F <Plug>(coc-action-format) "does not work
@@ -212,7 +209,6 @@ endfunction
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " Remap for rename current word
-" TODO: Un giorno devo farlo funzionare
  nmap <leader>rn <Plug>(coc-rename)
 
 " Show all diagnostics
@@ -262,7 +258,7 @@ function! s:check_back_space() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-let g:coc_snippet_next = '<tab>'
+"let g:coc_snippet_next = '<tab>'
 """""""""""""""""""""""""""
 "  Defining this folding  "
 """""""""""""""""""""""""""
