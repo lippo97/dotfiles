@@ -1,0 +1,501 @@
+* My emacs configuration
+** Setup use-package
+#+BEGIN_SRC emacs-lisp
+
+(require 'package)
+
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu" . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(setq package-enable-at-startup nil)
+(package-initialize)
+
+;; Setup use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)
+#+END_SRC
+** General stuff, menubar, toolbar, eccetera
+#+BEGIN_SRC emacs-lisp
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (blink-cursor-mode -1)
+  (server-mode t)
+  (set-face-attribute 'default nil
+                      :height 140)
+  (setf custom-safe-themes t)
+  ;; (load-theme 'sanityinc-tomorrow-day)
+  ;; (color-theme-sanityinc-tomorrow-day)
+  ;; (when window-system (global-hl-line-mode t))
+  (use-package
+    exec-path-from-shell
+    :config (when (memq window-system '(mac ns x))
+              (exec-path-from-shell-initialize)))
+  (defun config-visit ()
+    (interactive)
+    (find-file "~/.emacs.d/settings.org"))
+  (global-set-key (kbd "C-c e") 'config-visit)
+  (defun config-reload ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "settings.org" user-emacs-directory)))
+  (global-set-key (kbd "C-c r") 'config-reload)
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+#+END_SRC
+** Themes
+*** Modus themes
+#+BEGIN_SRC emacs-lisp
+  (use-package modus-operandi-theme
+    :ensure t
+    :config
+    (setq modus-operandi-theme-slanted-constructs t
+          modus-operandi-theme-bold-constructs nil
+          modus-operandi-theme-visible-fringes nil
+          modus-operandi-theme-distinct-org-blocks nil
+          modus-operandi-theme-proportional-fonts nil
+          modus-operandi-theme-scale-headings t))
+
+  (use-package modus-vivendi-theme
+    :ensure t
+    :config
+    (setq modus-vivendi-theme-slanted-constructs t
+          modus-vivendi-theme-bold-constructs nil
+          modus-vivendi-theme-visible-fringes nil
+          modus-vivendi-theme-distinct-org-blocks nil
+          modus-vivendi-theme-proportional-fonts nil
+          modus-vivendi-theme-scale-headings t))
+
+  (load-theme 'modus-vivendi t)
+#+END_SRC
+** Backups
+Thanks my friend [[https://github.com/alhassy/emacs.d#automatic-backups][alhassy emacs.d]]
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+  (setq delete-old-versions t)
+  (setq kept-old-versions 5)
+  (setq vc-make-backup-files -1)
+  (setq version-control t)
+#+END_SRC
+** Which Key
+#+BEGIN_SRC emacs-lisp
+  (use-package
+    which-key
+    :diminish
+    :config (which-key-mode t))
+#+END_SRC
+** Diminish
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :ensure t)
+#+END_SRC
+** EXWM
+#+BEGIN_SRC emacs-lisp
+  ;; (require 'exwm)
+  ;; (require 'exwm-config)
+  ;; (exwm-config-default)
+#+END_SRC
+** Shell pop
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package shell-pop
+  ;;   :custom
+  ;;   (shell-pop-universal-key "C-t")
+  ;;   (shell-pop-term-shell "/bin/zsh")
+  ;;   (shell-pop-window-size 30)
+  ;;   (shell-pop-window-position "bottom")
+  ;;   (shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+  ;;   (shell-pop-full-span t))
+#+END_SRC
+** Dimmer
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package dimmer
+  ;;   :ensure t
+  ;;   :config (dimmer-mode t))
+#+END_SRC
+** Dired
+   Bind "/" as swiper
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load "dired"
+    (define-key dired-mode-map (kbd "/") 'swiper))
+#+END_SRC
+** Projectile
+Use projectile to move around projects.
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :config
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    )
+#+END_SRC
+*** Projectile counsel
+    And use ivy as its completion framework
+#+BEGIN_SRC emacs-lisp
+    (use-package counsel-projectile
+
+      :ensure t
+      :config (counsel-projectile-mode 1))
+#+END_SRC
+** Org mode
+*** Frequently used keybindings
+#+BEGIN_SRC emacs-lisp
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-switchb)
+#+END_SRC
+*** org-src-hook
+#+BEGIN_SRC emacs-lisp
+  (defun disable-flycheck-in-org-src-block ()
+    (setq-local flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
+
+  (add-hook 'org-src-mode-hook 'disable-flycheck-in-org-src-block)
+#+END_SRC
+*** org-bullets
+#+BEGIN_SRC emacs-lisp
+(use-package org-bullets
+:ensure t
+:init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+*** org-babel
+#+BEGIN_SRC emacs-lisp
+  (require 'ob-shell)
+  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)))
+#+END_SRC
+*** org-journal
+Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism]]!
+#+BEGIN_SRC emacs-lisp
+    (use-package org-journal
+      :ensure t
+      :init
+      (setq org-journal-dir "~/journal/")
+      :config
+      (defun org-journal-save-entry-and-exit()
+      "Simple convenience function.
+      Saves the buffer of the current day's entry and kills the window
+      Similar to org-capture like behavior"
+      (interactive)
+      (save-buffer)
+      (kill-buffer-and-window))
+      (define-key org-journal-mode-map (kbd "C-x C-s") 'org-journal-save-entry-and-exit)
+      )
+#+END_SRC
+
+** PDF
+*** pdf-tools
+#+BEGIN_SRC emacs-lisp
+  (use-package pdf-tools
+    :ensure t
+    :config
+    ;; (pdf-tools-install)
+    (setq pdf-tools-handle-upgrades nil)
+    )
+#+END_SRC
+*** org-noter
+#+BEGIN_SRC emacs-lisp
+  (use-package org-noter
+    :ensure t)
+#+END_SRC
+** Expand region
+#+BEGIN_SRC emacs-lisp
+  (use-package expand-region
+    :config
+    (global-set-key (kbd "C-=") 'er/expand-region))
+#+END_SRC
+** General stuff II
+#+BEGIN_SRC emacs-lisp
+  (defun my-prog-mode-hook ()
+  "My prog mode hook"
+  (setq compilation-scroll-output t)
+  (setq-default indent-tabs-mode nil)
+  (setq tab-width 4)
+  (display-line-numbers-mode t)
+  (setq display-line-numbers-type 'relative)
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width))
+
+  (add-hook 'prog-mode-hook 'my-prog-mode-hook)
+
+  (use-package
+    "startup"
+    :ensure nil
+    :config (setq inhibit-startup-screen t))
+
+  (use-package
+    dashboard
+    :config (dashboard-setup-startup-hook)
+    (define-key dashboard-mode-map (kbd "n") 'dashboard-next-line)
+    (define-key dashboard-mode-map (kbd "p") 'dashboard-previous-line)
+    (setq dashboard-startup-banner 'logo dashboard-banner-logo-title "Dangerously powerful"
+          dashboard-set-footer nil))
+
+  (use-package
+    whitespace
+    :ensure nil
+    :config (add-hook 'before-save-hook 'whitespace-cleanup))
+#+END_SRC
+
+
+
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :config
+;;   (doom-modeline-mode 1)
+;;   (setq doom-modeline-height 20)
+;;   (setq doom-modeline-project-detection 'projectile)
+;;   (setq doom-modeline-major-mode-icon t)
+;;   (setq doom-modeline-lsp t)
+;;   (setq doom-modeline-buffer-encoding nil)
+;;   )
+
+** Ivy
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy-hydra
+    :ensure t)
+  (use-package
+    ivy
+    :diminish
+    :diminish 'counsel-mode
+    :ensure t
+    :config (ivy-mode 1)
+    (counsel-mode 1)
+    (setq ivy-use-group-face-if-no-groups t)) ;; needed or it throws an error
+#+END_SRC
+** Yasnippet
+#+BEGIN_SRC emacs-lisp
+  (use-package
+    yasnippet
+    :config (define-key yas-minor-mode-map (kbd "TAB") nil)
+    (define-key yas-minor-mode-map (kbd "<tab>") nil)
+    (define-key yas-minor-mode-map (kbd "C-;") #'yas-expand)
+    (add-hook 'prog-mode-hook (lambda ()
+                                (yas-minor-mode))))
+#+END_SRC
+
+** Company
+*** Front-end
+#+BEGIN_SRC emacs-lisp
+  (use-package
+    company
+    :hook (prog-mode . company-mode)
+    :config (setq company-minimum-prefix-length 1
+                  company-idle-delay 0.1
+                  company-tooltip-align-annotations t)
+    (define-key company-active-map (kbd "C-n") 'company-select-next)
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-mode-map (kbd "C-c <SPC>") 'company-complete-common))
+#+END_SRC
+
+** Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package
+    flycheck
+    :ensure t
+    :config (add-hook 'prog-mode-hook (lambda ()
+                                        (flycheck-mode)))
+    (add-to-list 'display-buffer-alist `(,(rx bos "*Flycheck errors*" eos)
+                                         (display-buffer-reuse-window display-buffer-in-side-window)
+                                         (side            . bottom)
+                                         (reusable-frames . visible)
+                                         (window-height   . 0.25))))
+#+END_SRC
+** Other stuff i dont care actually
+
+
+(use-package
+  lsp-mode
+  :commands lsp
+  :config (setq lsp-prefer-flymake nil)
+  :hook ((c-mode c++-mode python-mode typescript-mode) . lsp))
+
+(use-package
+  lsp-ui
+  :after lsp-mode
+  :config (require 'flycheck)
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (add-hook 'lsp-mode-hook 'flycheck-mode)
+  (setq lsp-ui-doc-enable nil lsp-ui-sideline-enable nil lsp-ui-flycheck-enable t))
+
+(use-package
+  company-lsp
+  :config (push 'company-lsp company-backends))
+
+(use-package
+  lsp-java
+  :config (add-hook 'java-mode-hook #'lsp))
+
+
+(use-package tex-mode
+  :ensure auctex
+  :config
+  (eval-after-load "tex"
+  '(add-to-list 'TeX-view-program-list '("Zathura" "zathura %o"))))
+
+
+(use-package
+  typescript-mode
+  :mode (("\\.ts\\'" . typescript-mode))
+  :config
+  ;; use local eslint from node_modules before global
+  ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+  (defun my/use-eslint-from-node-modules ()
+    (let* ((root (locate-dominating-file (or (buffer-file-name)
+                                             default-directory) "node_modules"))
+           (eslint (and root
+                        (expand-file-name "node_modules/eslint/bin/eslint.js" root))))
+      (when (and eslint
+                 (file-executable-p eslint))
+        (setq-local flycheck-javascript-eslint-executable eslint))))
+  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+  (setq tab-width 2)
+  (require 'ansi-color)
+  (defun colorize-compilation-buffer ()
+    (ansi-color-apply-on-region compilation-filter-start (point-max)))
+  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
+
+(add-hook 'java-mode-hook (lambda ()
+                            (setq c-basic-offset 4
+                            tab-width 4
+                                    indent-tabs-mode nil)))
+** Elisp
+*** defaults
+#+BEGIN_SRC emacs-lisp
+  (defun my-emacs-lisp-mode-hook ()
+    (show-paren-mode t)
+    (setq show-paren-style 'parenthesis))
+  (add-hook 'emacs-lisp-mode-hook 'my-emacs-lisp-mode-hook)
+#+END_SRC
+*** paredit
+ #+BEGIN_SRC emacs-lisp
+   (use-package paredit
+   :init (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+ #+END_SRC
+*** rainbow-delimiters
+ #+BEGIN_SRC emacs-lisp
+   (use-package rainbow-delimiters
+       :ensure t
+       :config
+       (add-hook 'elisp-mode-hook 'rainbow-delimiters-mode))
+ #+END_SRC
+** Python
+#+BEGIN_SRC emacs-lisp
+  (use-package company-jedi
+    :ensure t)
+
+#+END_SRC
+** Haskell
+#+BEGIN_SRC emacs-lisp
+  (use-package dante
+    :after haskell-mode
+    :init
+    (add-hook 'haskell-mode-hook 'dante-mode)
+    (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
+#+END_SRC
+** Javascript
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode
+    :ensure t
+    :config (add-hook 'js-mode-hook 'js2-minor-mode))
+#+END_SRC
+** Tide
+#+BEGIN_SRC emacs-lisp
+  (use-package
+    tide
+    :ensure t
+    :config (defun setup-tide-mode ()
+              (interactive)
+              (tide-setup)
+              (flycheck-mode +1)
+              (lsp-ui-mode 1)
+              (eldoc-mode +1)
+              (electric-pair-mode 1)
+              (tide-hl-identifier-mode +1)
+              (company-mode +1))
+
+    ;; aligns annotation to the right hand side
+    (setq company-tooltip-align-annotations t
+          flycheck-idle-change-delay 2.5
+          c-basic-offset 2
+          tab-width 2
+          indent-tabs-mode nil
+          typescript-indent-level 2
+          show-paren-style 'parenthesis)
+
+    ;; formats the buffer before saving
+    (add-hook 'before-save-hook 'tide-format-before-save)
+    (add-hook 'typescript-mode-hook #'setup-tide-mode)
+    (add-hook 'js-mode-hook 'setup-tide-mode)
+    (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint))
+    ;; https://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
+    (defun my/use-eslint-from-node-modules ()
+      (let* ((root (locate-dominating-file (or (buffer-file-name)
+                                               default-directory) "node_modules"))
+             (eslint (and root
+                          (expand-file-name "node_modules/.bin/eslint" root))))
+        (when (and eslint
+                   (file-executable-p eslint))
+          (setq-local flycheck-javascript-eslint-executable eslint))))
+
+    (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules))
+#+END_SRC
+** Scala
+#+BEGIN_SRC emacs-lisp
+  (use-package scala-mode
+    :mode "\\.s\\(cala\\|bt\\)$")
+
+  ;; Enable sbt mode for executing sbt commands
+  (use-package sbt-mode
+    :commands sbt-start sbt-command
+    :config
+    ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+    ;; allows using SPACE when in the minibuffer
+    (substitute-key-definition
+     'minibuffer-complete-word
+     'self-insert-command
+     minibuffer-local-completion-map)
+     ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+     (setq sbt:program-options '("-Dsbt.supershell=false"))
+  )
+
+  ;; Enable nice rendering of diagnostics like compile errors.
+  (use-package flycheck
+    :init (global-flycheck-mode))
+
+  (use-package lsp-mode
+    ;; Optional - enable lsp-mode automatically in scala files
+    :hook  (scala-mode . lsp)
+           (lsp-mode . lsp-lens-mode)
+    :config (setq lsp-prefer-flymake nil))
+
+  ;; Enable nice rendering of documentation on hover
+  (use-package lsp-ui)
+
+  ;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
+  ;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
+  ;;   to avoid odd behavior with snippets and indentation
+  (use-package yasnippet)
+
+  ;; Add company-lsp backend for metals
+  (use-package company-lsp)
+
+  ;; Use the Debug Adapter Protocol for running tests and debugging
+  (use-package posframe
+    ;; Posframe is a pop-up tool that must be manually installed for dap-mode
+    )
+  (use-package dap-mode
+    :hook
+    (lsp-mode . dap-mode)
+    (lsp-mode . dap-ui-mode)
+    )
+
+  ;; Use the Tree View Protocol for viewing the project structure and triggering compilation
+  (use-package lsp-treemacs
+    :config
+    (lsp-metals-treeview-enable t)
+    (setq lsp-metals-treeview-show-when-views-received t)
+    )
+
+#+END_SRC
