@@ -129,13 +129,17 @@ Use projectile to move around projects.
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     )
 #+END_SRC
-*** Projectile counsel
+*** counsel-projectile
     And use ivy as its completion framework
 #+BEGIN_SRC emacs-lisp
     (use-package counsel-projectile
-
       :ensure t
       :config (counsel-projectile-mode 1))
+#+END_SRC
+** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
 #+END_SRC
 ** Org mode
 *** Frequently used keybindings
@@ -274,7 +278,6 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
 #+END_SRC
 
 ** Company
-*** Front-end
 #+BEGIN_SRC emacs-lisp
   (use-package
     company
@@ -302,64 +305,6 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
                                          (reusable-frames . visible)
                                          (window-height   . 0.25))))
 #+END_SRC
-** Other stuff i dont care actually
-
-
-(use-package
-  lsp-mode
-  :commands lsp
-  :config (setq lsp-prefer-flymake nil)
-  :hook ((c-mode c++-mode python-mode typescript-mode) . lsp))
-
-(use-package
-  lsp-ui
-  :after lsp-mode
-  :config (require 'flycheck)
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
-  (add-hook 'lsp-mode-hook 'flycheck-mode)
-  (setq lsp-ui-doc-enable nil lsp-ui-sideline-enable nil lsp-ui-flycheck-enable t))
-
-(use-package
-  company-lsp
-  :config (push 'company-lsp company-backends))
-
-(use-package
-  lsp-java
-  :config (add-hook 'java-mode-hook #'lsp))
-
-
-(use-package tex-mode
-  :ensure auctex
-  :config
-  (eval-after-load "tex"
-  '(add-to-list 'TeX-view-program-list '("Zathura" "zathura %o"))))
-
-
-(use-package
-  typescript-mode
-  :mode (("\\.ts\\'" . typescript-mode))
-  :config
-  ;; use local eslint from node_modules before global
-  ;; http://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
-  (defun my/use-eslint-from-node-modules ()
-    (let* ((root (locate-dominating-file (or (buffer-file-name)
-                                             default-directory) "node_modules"))
-           (eslint (and root
-                        (expand-file-name "node_modules/eslint/bin/eslint.js" root))))
-      (when (and eslint
-                 (file-executable-p eslint))
-        (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
-  (setq tab-width 2)
-  (require 'ansi-color)
-  (defun colorize-compilation-buffer ()
-    (ansi-color-apply-on-region compilation-filter-start (point-max)))
-  (add-hook 'compilation-filter-hook 'colorize-compilation-buffer))
-
-(add-hook 'java-mode-hook (lambda ()
-                            (setq c-basic-offset 4
-                            tab-width 4
-                                    indent-tabs-mode nil)))
 ** Elisp
 *** defaults
 #+BEGIN_SRC emacs-lisp
