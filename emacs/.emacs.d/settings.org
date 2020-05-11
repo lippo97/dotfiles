@@ -25,12 +25,9 @@
   (scroll-bar-mode -1)
   (blink-cursor-mode -1)
   (server-mode t)
-  (set-face-attribute 'default nil
-                      :height 140)
   (setf custom-safe-themes t)
-  ;; (load-theme 'sanityinc-tomorrow-day)
-  ;; (color-theme-sanityinc-tomorrow-day)
-  ;; (when window-system (global-hl-line-mode t))
+  (setq inhibit-startup-screen t)
+  (delete-selection-mode t)
   (use-package
     exec-path-from-shell
     :config (when (memq window-system '(mac ns x))
@@ -41,44 +38,151 @@
   (global-set-key (kbd "C-c e") 'config-visit)
   (defun config-reload ()
     (interactive)
+    (let* ((old (expand-file-name "settings.el" user-emacs-directory)))
+      (when (file-exists-p old)
+        (delete-file old)))
     (org-babel-load-file (expand-file-name "settings.org" user-emacs-directory)))
   (global-set-key (kbd "C-c r") 'config-reload)
   (global-set-key (kbd "C-x C-b") 'ibuffer)
 #+END_SRC
+*** Temporary files
+    #+begin_src emacs-lisp
+      (setq-default create-lockfiles nil)
+    #+end_src
+*** Backups
+ Thanks my friend [[https://github.com/alhassy/emacs.d#automatic-backups][alhassy emacs.d]]
+ #+BEGIN_SRC emacs-lisp
+   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+   (setq backup-by-copying t)
+   (setq delete-old-versions t)
+   (setq kept-old-versions 5)
+   (setq vc-make-backup-files -1)
+   (setq version-control t)
+ #+END_SRC
 ** Themes
 *** Modus themes
-#+BEGIN_SRC emacs-lisp
-  (use-package modus-operandi-theme
-    :ensure t
-    :config
-    (setq modus-operandi-theme-slanted-constructs t
-          modus-operandi-theme-bold-constructs nil
-          modus-operandi-theme-visible-fringes nil
-          modus-operandi-theme-distinct-org-blocks nil
-          modus-operandi-theme-proportional-fonts nil
-          modus-operandi-theme-scale-headings t))
+ #+BEGIN_SRC emacs-lisp
+   (use-package modus-operandi-theme
+     :ensure t
+     :config
+     (setq modus-operandi-theme-slanted-constructs t
+           modus-operandi-theme-bold-constructs nil
+           modus-operandi-theme-visible-fringes nil
+           modus-operandi-theme-distinct-org-blocks nil
+           modus-operandi-theme-proportional-fonts nil
+           modus-operandi-theme-scale-headings t))
 
-  (use-package modus-vivendi-theme
-    :ensure t
-    :config
-    (setq modus-vivendi-theme-slanted-constructs t
-          modus-vivendi-theme-bold-constructs nil
-          modus-vivendi-theme-visible-fringes nil
-          modus-vivendi-theme-distinct-org-blocks nil
-          modus-vivendi-theme-proportional-fonts nil
-          modus-vivendi-theme-scale-headings t))
+   (use-package modus-vivendi-theme
+     :ensure t
+     :config
+     (setq modus-vivendi-theme-slanted-constructs t
+           modus-vivendi-theme-bold-constructs nil
+           modus-vivendi-theme-visible-fringes nil
+           modus-vivendi-theme-distinct-org-blocks nil
+           modus-vivendi-theme-proportional-fonts nil
+           modus-vivendi-theme-scale-headings t))
 
-  (load-theme 'modus-vivendi t)
-#+END_SRC
-** Backups
-Thanks my friend [[https://github.com/alhassy/emacs.d#automatic-backups][alhassy emacs.d]]
+   (load-theme 'doom-one t)
+ #+END_SRC
+*** Font
+    #+begin_src emacs-lisp
+      (set-frame-font "Source Code Pro 13")
+    #+end_src
+** Diminish
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-  (setq delete-old-versions t)
-  (setq kept-old-versions 5)
-  (setq vc-make-backup-files -1)
-  (setq version-control t)
+  (use-package diminish
+    :ensure t)
 #+END_SRC
+** Editing
+*** Expand region
+ #+BEGIN_SRC emacs-lisp
+   (use-package expand-region
+     :config
+     (global-set-key (kbd "C-=") 'er/expand-region))
+ #+END_SRC
+*** Symbol overlay
+    #+begin_src emacs-lisp
+      (use-package symbol-overlay
+        :ensure t
+        :config
+        (global-set-key (kbd "M-h") 'symbol-overlay-put)
+        :hook ((yaml-mode . symbol-overlay-mode)))
+    #+end_src
+*** Whole line or region
+    #+begin_src emacs-lisp
+      (use-package whole-line-or-region
+        :ensure t
+        :diminish (whole-line-or-region-mode)
+        :config (whole-line-or-region-global-mode 1))
+    #+end_src
+*** Multiple cursors
+    #+begin_src emacs-lisp
+      (use-package multiple-cursors
+        :ensure hydra
+        :config
+        (defhydra cqql-multiple-cursors-hydra (:hint nil)
+          "
+           ^Up^            ^Down^                  ^Miscellaneous^
+      --------------------------------------------------------------------------
+      [_p_]   Next    [_n_]   Next    [_l_] Edit lines     [_A_] Mark all like this
+      [_P_]   Skip    [_N_]   Skip    [_a_] Mark matching
+      [_M-p_] Unmark  [_M-n_] Unmark  [_q_] Quit"
+          ("l" mc/edit-lines :exit t)
+          ("a" mc/mark-all-like-this :exit t)
+          ("A" mc/mark-all-dwim :exit t)
+          ("n" mc/mark-next-like-this)
+          ("N" mc/skip-to-next-like-this)
+          ("M-n" mc/unmark-next-like-this)
+          ("p" mc/mark-previous-like-this)
+          ("P" mc/skip-to-previous-like-this)
+          ("M-p" mc/unmark-previous-like-this)
+          ("q" nil))
+        (global-set-key (kbd "M-m") 'cqql-multiple-cursors-hydra/body))
+    #+end_src
+*** My bindings
+    #+begin_src emacs-lisp
+      (defun lip-eol-and-newline ()
+        (interactive)
+        (move-end-of-line nil)
+        (newline-and-indent))
+
+      (defun lip-bol-and-newline ()
+        (interactive)
+        (move-beginning-of-line nil)
+        (newline)
+        (forward-line -1)
+        (indent-for-tab-command))
+
+      ;; https://www.emacswiki.org/emacs/CopyingWholeLines#toc10
+      (defun duplicate-current-line (&optional n)
+            "duplicate current line, make more than 1 copy given a numeric argument"
+            (interactive "p")
+            (save-excursion
+              (let ((nb (or n 1))
+                (current-line (thing-at-point 'line)))
+                ;; when on last line, insert a newline first
+                (when (or (= 1 (forward-line 1)) (eq (point) (point-max)))
+              (insert "\n"))
+
+                ;; now insert as many time as requested
+                (while (> n 0)
+              (insert current-line)
+              (decf n)))))
+
+      (global-set-key (kbd "C-o") 'lip-eol-and-newline)
+      (global-set-key (kbd "C-M-o") 'lip-bol-and-newline)
+      (global-set-key (kbd "C-d") 'duplicate-current-line)
+    #+end_src
+*** Navigation
+    #+begin_src emacs-lisp
+      (use-package avy
+        :ensure t
+        :diminish
+        :config (avy-setup-default)
+        (global-set-key (kbd "C-'") 'avy-goto-char)
+        (global-set-key (kbd "C-M-'") 'avy-goto-line)
+        (define-key org-mode-map (kbd "C-'") 'avy-goto-char))
+    #+end_src
 ** Which Key
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -86,40 +190,110 @@ Thanks my friend [[https://github.com/alhassy/emacs.d#automatic-backups][alhassy
     :diminish
     :config (which-key-mode t))
 #+END_SRC
-** Diminish
-#+BEGIN_SRC emacs-lisp
-  (use-package diminish
-    :ensure t)
-#+END_SRC
-** EXWM
-#+BEGIN_SRC emacs-lisp
-  ;; (require 'exwm)
-  ;; (require 'exwm-config)
-  ;; (exwm-config-default)
-#+END_SRC
-** Shell pop
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package shell-pop
-  ;;   :custom
-  ;;   (shell-pop-universal-key "C-t")
-  ;;   (shell-pop-term-shell "/bin/zsh")
-  ;;   (shell-pop-window-size 30)
-  ;;   (shell-pop-window-position "bottom")
-  ;;   (shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
-  ;;   (shell-pop-full-span t))
-#+END_SRC
-** Dimmer
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package dimmer
-  ;;   :ensure t
-  ;;   :config (dimmer-mode t))
-#+END_SRC
+** Eyebrowse
+   #+begin_src emacs-lisp
+     (use-package eyebrowse
+       :ensure t
+       :diminish
+       :config (eyebrowse-mode 1))
+   #+end_src
+** Ace window
+   From the ace-window wiki.
+   #+begin_src emacs-lisp
+     (defun joe-scroll-other-window()
+       (interactive)
+       (scroll-other-window 1))
+     (defun joe-scroll-other-window-down ()
+       (interactive)
+       (scroll-other-window-down 1))
+     (use-package ace-window
+         :ensure t
+         :defer 1
+         :config
+         (set-face-attribute
+          'aw-leading-char-face nil
+          :foreground "yellow"
+          :height 3.0)
+         (set-face-attribute
+          'aw-mode-line-face nil
+          :inherit 'mode-line-buffer-id
+          :foreground "dark violet")
+         (setq aw-keys '(?a ?s ?d ?f ?j ?k ?l)
+               aw-dispatch-always t
+               aw-dispatch-alist
+               '((?x aw-delete-window "Ace - Delete Window")
+                 (?c aw-swap-window "Ace - Swap Window")
+                 (?o other-window)
+                 (?j aw-switch-buffer-in-window "Select Buffer")
+                 (?k aw-switch-buffer-other-window "Select Buffer Other ")
+                 (?v aw-split-window-vert "Ace - Split Vert Window")
+                 (?h aw-split-window-horz "Ace - Split Horz Window")
+                 (?m delete-other-windows "Ace - Maximize Window")
+                 (?b balance-windows)
+                 (?u (lambda ()
+                       (progn
+                         (winner-undo)
+                         (setq this-command 'winner-undo))))
+                 (?r winner-redo)
+                 (?? aw-show-dispatch-help)))
+
+         (global-set-key (kbd "M-o") 'ace-window)
+
+         (when (package-installed-p 'hydra)
+           (defhydra hydra-window-size (:color red)
+             "Windows size"
+             ("h" shrink-window-horizontally "shrink horizontal")
+             ("j" shrink-window "shrink vertical")
+             ("k" enlarge-window "enlarge vertical")
+             ("l" enlarge-window-horizontally "enlarge horizontal"))
+           (defhydra hydra-window-frame (:color red)
+             "Frame"
+             ("f" make-frame "new frame")
+             ("x" delete-frame "delete frame"))
+           (defhydra hydra-window-scroll (:color red)
+             "Scroll other window"
+             ("n" joe-scroll-other-window "scroll")
+             ("p" joe-scroll-other-window-down "scroll down"))
+           (add-to-list 'aw-dispatch-alist '(?w hydra-window-size/body) t)
+           (add-to-list 'aw-dispatch-alist '(?o hydra-window-scroll/body) t))
+         (ace-window-display-mode t))
+   #+end_src
 ** Dired
    Bind "/" as swiper
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load "dired"
     (define-key dired-mode-map (kbd "/") 'swiper))
 #+END_SRC
+** All the icons
+   #+begin_src emacs-lisp
+     (use-package all-the-icons
+       :ensure t)
+   #+end_src
+*** dired support
+    #+begin_src emacs-lisp
+      (use-package all-the-icons-dired
+        :ensure all-the-icons
+        :config
+        (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+    #+end_src
+** Neotree
+   #+begin_src emacs-lisp
+     (use-package neotree
+       :ensure t
+       :config
+       (global-set-key [f8] 'neotree-toggle)
+       (setq neo-theme (if (display-graphic-p) 'icons 'arrow)))
+   #+end_src
+** Solaire mode
+   #+begin_src emacs-lisp
+     (use-package solaire-mode
+       :hook
+       ((change-major-mode after-revert ediff-prepare-buffer) . turn-on-solaire-mode)
+       (minibuffer-setup . solaire-mode-in-minibuffer)
+       :config
+       (solaire-global-mode +1)
+       (solaire-mode-swap-bg))
+   #+end_src
 ** Projectile
 Use projectile to move around projects.
 #+BEGIN_SRC emacs-lisp
@@ -136,13 +310,53 @@ Use projectile to move around projects.
       :ensure t
       :config (counsel-projectile-mode 1))
 #+END_SRC
-** Magit
-#+BEGIN_SRC emacs-lisp
-  (if (executable-find "git")
-      (use-package magit
-        :ensure t))
-#+END_SRC
+*** ripgrep
+    #+begin_src emacs-lisp
+      (use-package projectile-ripgrep
+        :ensure t)
+    #+end_src
+** Git support
+*** Magit
+ #+BEGIN_SRC emacs-lisp
+   (if (executable-find "git")
+       (use-package magit
+         :ensure t
+         :config
+         (global-set-key (kbd "C-x g") 'magit-status)))
+ #+END_SRC
+*** Diff hl
+    [[https://www.reddit.com/r/emacs/comments/6rxkyo/why_i_have_to_turn_off_and_on_diffhl_for_the/dl9mtdg/][Stolen here.]]
+    #+begin_src emacs-lisp
+      (use-package
+        diff-hl
+        :config (setq diff-hl-fringe-bmp-function 'diff-hl-fringe-bmp-from-type)
+        (setq diff-hl-margin-side 'left)
+        (defun my-diff-hl-margin-hook ()
+          (diff-hl-mode t)
+          ;; (diff-hl-margin-mode t)
+          )
+        (add-hook 'prog-mode-hook 'my-diff-hl-margin-hook)
+        (add-hook 'markdown-mode-hook 'my-diff-hl-margin-hook)
+        (add-hook 'org-mode-hook 'my-diff-hl-margin-hook)
+        (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
+        (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+    #+end_src
+** Ibuffer
+   #+begin_src emacs-lisp
+     (use-package ibuffer-vc
+       :ensure t
+       :config
+       (add-hook 'ibuffer-hook
+                 (lambda ()
+                   (ibuffer-vc-set-filter-groups-by-vc-root)
+                   (unless (eq ibuffer-sorting-mode 'alphabetic)
+                     (ibuffer-do-sort-by-alphabetic)))))
+   #+end_src
 ** Org mode
+*** org-tempo
+#+begin_src emacs-lisp
+  (require 'org-tempo)
+#+end_src
 *** Frequently used keybindings
 #+BEGIN_SRC emacs-lisp
   (global-set-key "\C-cl" 'org-store-link)
@@ -202,30 +416,20 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
   (use-package org-noter
     :ensure t)
 #+END_SRC
-** Expand region
-#+BEGIN_SRC emacs-lisp
-  (use-package expand-region
-    :config
-    (global-set-key (kbd "C-=") 'er/expand-region))
-#+END_SRC
 ** General stuff II
 #+BEGIN_SRC emacs-lisp
   (defun my-prog-mode-hook ()
-  "My prog mode hook"
-  (setq compilation-scroll-output t)
-  (setq-default indent-tabs-mode nil)
-  (setq tab-width 4)
-  (display-line-numbers-mode t)
-  (setq display-line-numbers-type 'relative)
-  (defvaralias 'c-basic-offset 'tab-width)
-  (defvaralias 'cperl-indent-level 'tab-width))
+    "My prog mode hook"
+    (setq compilation-scroll-output t)
+    (setq-default indent-tabs-mode nil)
+    (display-line-numbers-mode t)
+    (column-number-mode t)
+    (setq display-line-numbers-type 'relative)
+    )
+  ;; (defvaralias 'c-basic-offset 'tab-width)
+  ;; (defvaralias 'cperl-indent-level 'tab-width))
 
   (add-hook 'prog-mode-hook 'my-prog-mode-hook)
-
-  (use-package
-    "startup"
-    :ensure nil
-    :config (setq inhibit-startup-screen t))
 
   (use-package
     dashboard
@@ -241,19 +445,6 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
     :config (add-hook 'before-save-hook 'whitespace-cleanup))
 #+END_SRC
 
-
-
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :config
-;;   (doom-modeline-mode 1)
-;;   (setq doom-modeline-height 20)
-;;   (setq doom-modeline-project-detection 'projectile)
-;;   (setq doom-modeline-major-mode-icon t)
-;;   (setq doom-modeline-lsp t)
-;;   (setq doom-modeline-buffer-encoding nil)
-;;   )
-
 ** Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy-hydra
@@ -267,6 +458,27 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
     (counsel-mode 1)
     (setq ivy-use-group-face-if-no-groups t)) ;; needed or it throws an error
 #+END_SRC
+*** Ivy posframe
+    #+begin_src emacs-lisp
+      (use-package ivy-posframe
+        :diminish
+        :after ivy
+        :custom
+        (ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
+        (ivy-posframe-height-alist '((t . 20)))
+        (ivy-posframe-parameters '((internal-border-width . 10)))
+        (ivy-posframe-font "Source Code Pro 13")
+        (ivy-posframe-width 120)
+        :config
+        (ivy-posframe-mode +1))
+    #+end_src
+
+*** Ivy rich
+    #+begin_src emacs-lisp
+      (use-package ivy-rich
+        :ensure t
+        :config (ivy-rich-mode t))
+    #+end_src
 ** Yasnippet
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -341,11 +553,18 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
     (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
 #+END_SRC
 ** Javascript
+*** js-mode
 #+BEGIN_SRC emacs-lisp
-  (use-package js2-mode
-    :ensure t
-    :config (add-hook 'js-mode-hook 'js2-minor-mode))
+  (defun my/js-mode-hook ()
+    (setq js-indent-level 2
+          js-jsx-indent-level 2))
+  (add-hook 'js-mode-hook 'my/js-mode-hook)
+
 #+END_SRC
+** Typescript
+   #+begin_src emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode))
+   #+end_src
 ** Tide
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -364,15 +583,16 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
     ;; aligns annotation to the right hand side
     (setq company-tooltip-align-annotations t
           flycheck-idle-change-delay 2.5
-          c-basic-offset 2
+          ;; c-basic-offset 2
           tab-width 2
           indent-tabs-mode nil
+          js-indent-level 2
           typescript-indent-level 2
           show-paren-style 'parenthesis)
 
     ;; formats the buffer before saving
-    (add-hook 'before-save-hook 'tide-format-before-save)
-    (add-hook 'typescript-mode-hook #'setup-tide-mode)
+    ;; (add-hook 'before-save-hook 'tide-format-before-save)
+    (add-hook 'typescript-mode-hook 'setup-tide-mode)
     (add-hook 'js-mode-hook 'setup-tide-mode)
     (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint))
     ;; https://emacs.stackexchange.com/questions/21205/flycheck-with-file-relative-eslint-executable
