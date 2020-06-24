@@ -155,23 +155,38 @@
 
       ;; https://www.emacswiki.org/emacs/CopyingWholeLines#toc10
       (defun duplicate-current-line (&optional n)
-            "duplicate current line, make more than 1 copy given a numeric argument"
-            (interactive "p")
-            (save-excursion
-              (let ((nb (or n 1))
+        "duplicate current line, make more than 1 copy given a numeric argument"
+        (interactive "p")
+        (save-excursion
+          (let ((nb (or n 1))
                 (current-line (thing-at-point 'line)))
-                ;; when on last line, insert a newline first
-                (when (or (= 1 (forward-line 1)) (eq (point) (point-max)))
+            ;; when on last line, insert a newline first
+            (when (or (= 1 (forward-line 1)) (eq (point) (point-max)))
               (insert "\n"))
 
-                ;; now insert as many time as requested
-                (while (> n 0)
+            ;; now insert as many time as requested
+            (while (> n 0)
               (insert current-line)
               (decf n)))))
+
+      (defun lip-join-next-line ()
+        (interactive)
+        (delete-indentation t))
+
+      (defun lip-clear-whitespaces-inside-braces ()
+        (interactive)
+        (let (max)
+          (skip-chars-forward " \n")
+          (setq max (point))
+          (skip-chars-backward " \n")
+          (delete-region max (point)))
+        )
 
       (global-set-key (kbd "C-o") 'lip-eol-and-newline)
       (global-set-key (kbd "C-M-o") 'lip-bol-and-newline)
       (global-set-key (kbd "C-d") 'duplicate-current-line)
+      (global-set-key (kbd "C-j") 'lip-join-next-line)
+      (global-set-key (kbd "M-\\") 'lip-clear-whitespaces-inside-braces)
     #+end_src
 *** Navigation
     #+begin_src emacs-lisp
@@ -183,6 +198,187 @@
         (global-set-key (kbd "C-M-'") 'avy-goto-line)
         (define-key org-mode-map (kbd "C-'") 'avy-goto-char))
     #+end_src
+** Modal editor test
+*** Convenience functions
+    #+begin_src emacs-lisp
+      (defun insert-mode ()
+        "Kill active region if active"
+        (interactive)
+        (if mark-active (kill-region (region-beginning)
+                                     (region-end)))
+        (message "Insert mode activated"))
+      (defun forward-insert-mode ()
+        (interactive)
+        (if (eq (line-end-position)
+                (point))
+            (insert-char ? )
+          (forward-char))
+        (message  "Insert mode activated"))
+      (defun lip-region-square ()
+        (interactive)
+        (when mark-active (exchange-point-and-mark)
+              (move-beginning-of-line nil)
+              (exchange-point-and-mark)
+              (forward-line)))
+      (defun visual-char ()
+        (interactive)
+        (if mark-active (deactivate-mark)
+          (set-mark-command nil)))
+      (defun visual-line ()
+        (interactive)
+        (if mark-active (lip-region-square)
+          (progn (move-beginning-of-line 1)
+                 (set-mark-command nil))))
+
+      (defun replace-char-at-point ()
+        "Like vim's replace command."
+        (interactive)
+        (delete-char 1)
+        (insert " ")
+        (backward-char 1)
+        (message "Replace with char.")
+        (setq-local cursor-type '(hbar . 3))
+        (call-interactively #'quoted-insert)
+        (setq-local cursor-type (default-value 'cursor-type))
+        (delete-char 1)
+        (backward-char 1))
+    #+end_src
+*** Selected minor mode bindings
+    #+begin_src emacs-lisp
+      (use-package selected
+        :ensure t
+        :config (setq selected-minor-mode-override t)
+        :bind (:map selected-keymap
+                    ;; ("q" . selected-off)
+                    ;; ("u" . upcase-region)
+                    ;; ("d" . downcase-region)
+                    ;; ("w" . count-words-region)
+                    ("J" . drag-stuff-down)
+                    ("K" . drag-stuff-up)
+                    ("DEL" . delete-region)
+                    ("e" . mc/edit-lines)
+                    ("s" . lip-region-square)))
+    #+end_src
+*** Ryo modal mode bindings
+   #+begin_src emacs-lisp
+     (use-package ryo-modal
+       :ensure t
+       :config
+       (setq ryo-modal-cursor-color "Goldenrod")
+       (defun activate-command-mode ()
+         (interactive)
+         (unless ryo-modal-mode
+             (ryo-modal-mode)))
+       (global-set-key (kbd "<escape>") 'activate-command-mode)
+       (add-hook 'ryo-modal-mode-hook
+                 (lambda ()
+                   (if ryo-modal-mode
+                       (selected-minor-mode 1)
+                     (selected-minor-mode -1))))
+       (ryo-modal-keys
+        (:norepeat t)
+        ("0" "M-0")
+        ("1" "M-1")
+        ("2" "M-2")
+        ("3" "M-3")
+        ("4" "M-4")
+        ("5" "M-5")
+        ("6" "M-6")
+        ("7" "M-7")
+        ("8" "M-8")
+        ("9" "M-9"))
+       (ryo-modal-keys
+        ("i" insert-mode :exit t)
+        ("a" forward-insert-mode :exit t)
+        ("r" replace-char-at-point)
+        ("o" lip-eol-and-newline :exit t)
+        ("O" lip-bol-and-newline :exit t)
+        ("u" undo)
+        ("h" backward-char)
+        ("j" next-line)
+        ("k" previous-line)
+        ("l" forward-char)
+        ("p" scroll-down)
+        ("n" scroll-up)
+        ("v" visual-char)
+        ("W" whole-line-or-region-kill-region)
+        ("b" backward-word)
+        ("f" forward-word)
+        ("y" whole-line-or-region-yank)
+        ("w" whole-line-or-region-copy-region-as-kill)
+        ("J" lip-join-next-line)
+        ("e" er/expand-region)
+        ("m" mc/mark-all-dwim)
+        ("A" move-beginning-of-line)
+        ("E" move-end-of-line)
+        ("s" isearch-forward)
+        ("S" isearch-backward)
+        ("," xref-pop-marker-stack)
+        ("." xref-find-definitions)
+        ("?" xref-find-references)
+        ("/" swiper))
+       (ryo-modal-keys
+        ("c"
+         (
+          ("i q" er/mark-inside-quotes)
+          ("a q" er/mark-outside-quotes)
+          )
+         :then '(kill-region) :exit t))
+       (ryo-modal-keys
+        ("x"
+         (
+          ("c" save-buffers-kill-terminal)
+          ("e" eval-last-sexp)
+          ("d" dired)
+          ("g" magit)
+          (";" comment-line)
+          ("x" exchange-point-and-mark)
+          ;; Buffer management
+          ("b" ivy-switch-buffer)
+          ("k" kill-buffer)
+          ("s" save-buffer)
+          ("S" save-some-buffers)
+          ;; Window management bindings
+          ("o" other-window)
+          ("0" delete-window)
+          ("1" delete-other-windows)
+          ("2" split-window-below)
+          ("3" split-window-right)
+          ("4"
+           (
+            ("b" ivy-switch-buffer-other-window)
+            ("f" find-file-other-window)))))
+        ("SPC"
+         (
+          ("x" counsel-M-x)
+          ;; Double spacebar for quick switching between the current project buffer
+          ("SPC" counsel-projectile-switch-to-buffer)
+          ("p"
+           (
+            ("b" counsel-projectile-switch-to-buffer)
+            ("c" projectile-compile-project)
+            ("f" counsel-projectile-find-file)
+            ("g" counsel-projectile-find-file-dwim)
+            ))
+          ("w"
+           (
+            ("a" ace-window)
+            ("h" windmove-left)
+            ("k" windmove-up)
+            ("j" windmove-down)
+            ("l" windmove-right)
+            ("s"
+             (
+              ("l" windmove-swap-states-right)
+              ("h" windmove-swap-states-left)
+              ("k" windmove-swap-states-up)
+              ("j" windmove-swap-states-down)
+              ))
+            )))
+          )
+     ))
+   #+end_src
+
 ** Which Key
 #+BEGIN_SRC emacs-lisp
   (use-package
@@ -259,11 +455,18 @@
          (ace-window-display-mode t))
    #+end_src
 ** Dired
-   Bind "/" as swiper
-#+BEGIN_SRC emacs-lisp
-  (with-eval-after-load "dired"
-    (define-key dired-mode-map (kbd "/") 'swiper))
-#+END_SRC
+*** my bindings
+    #+begin_src emacs-lisp
+      (with-eval-after-load 'dired
+        (define-key dired-mode-map (kbd "<backspace>") 'dired-up-directory))
+    #+end_src
+*** dired-git-info-mode
+    #+begin_src emacs-lisp
+      (use-package dired-git-info
+        :config
+        (setq dgi-auto-hide-details-p nil)
+        (add-hook 'dired-after-readin-hook 'dired-git-info-auto-enable))
+    #+end_src
 ** All the icons
    #+begin_src emacs-lisp
      (use-package all-the-icons
@@ -400,7 +603,31 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
       (define-key org-journal-mode-map (kbd "C-x C-s") 'org-journal-save-entry-and-exit)
       )
 #+END_SRC
+** Orgzly
+   #+begin_src emacs-lisp
+     (defun lip-open-orgzly-dir ()
+       (interactive)
+       (let* ((orgzly-dir (expand-file-name "Dropbox/Orgzly" "~")))
+         (counsel-find-file orgzly-dir))
+       )
+     (global-set-key (kbd "C-c o") 'lip-open-orgzly-dir)
 
+   #+end_src
+** Docker
+*** docker.el
+    #+begin_src emacs-lisp
+      (use-package docker
+        :config
+        (add-to-list 'display-buffer-alist `(,(rx bos "*docker-containers*" eos)
+                                             (display-buffer-reuse-window display-buffer-in-side-window)
+                                             (side            . bottom)
+                                             (reusable-frames . visible)
+                                             (window-height   . 0.25)))
+        (global-set-key (kbd "C-x j") 'docker)
+        (define-key docker-container-mode-map (kbd "q") 'delete-window)
+        )
+
+    #+end_src
 ** PDF
 *** pdf-tools
 #+BEGIN_SRC emacs-lisp
@@ -518,6 +745,26 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
                                          (reusable-frames . visible)
                                          (window-height   . 0.25))))
 #+END_SRC
+** Latex
+   #+begin_src emacs-lisp
+     (use-package tex
+       :ensure auctex
+       :mode ("\\.tex\\'" . latex-mode)
+       :config
+       (setq TeX-source-correlate-mode t)
+       (setq TeX-source-correlate-method 'synctex)
+       (setq TeX-auto-save t)
+       (setq TeX-parse-self t)
+       (setq TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o")))
+       (setq TeX-view-program-selection '((output-pdf "Evince")))
+
+       (setq TeX-source-correlate-start-server t)
+       ;; Update PDF buffers after successful LaTeX runs
+       (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+       (add-hook 'TeX-after-compilation-finished-functions
+                 #'TeX-revert-document-buffer)
+       )
+   #+end_src
 ** Elisp
 *** defaults
 #+BEGIN_SRC emacs-lisp
@@ -610,7 +857,9 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
 ** Scala
 #+BEGIN_SRC emacs-lisp
   (use-package scala-mode
-    :mode "\\.s\\(cala\\|bt\\)$")
+    :mode "\\.s\\(cala\\|bt\\)$"
+    :config
+    (electric-pair-local-mode t))
 
   ;; Enable sbt mode for executing sbt commands
   (use-package sbt-mode
@@ -660,8 +909,8 @@ Thanks [[http://www.howardism.org/Technical/Emacs/journaling-org.html][Howardism
   ;; Use the Tree View Protocol for viewing the project structure and triggering compilation
   (use-package lsp-treemacs
     :config
-    (lsp-metals-treeview-enable t)
-    (setq lsp-metals-treeview-show-when-views-received t)
+    (lsp-metals-treeview-enable 0)
+    (setq lsp-metals-treeview-show-when-views-received 0)
     )
 
 #+END_SRC

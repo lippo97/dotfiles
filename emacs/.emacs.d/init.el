@@ -18,7 +18,7 @@
  '(ivy-posframe-parameters '((internal-border-width . 10)))
  '(ivy-posframe-width 120)
  '(package-selected-packages
-   '(jest magit-popup multi-term elisp-format neotree all-the-icons-dired ivy-rich all-the-icons solaire-mode ivy-posframe diff-hl doom-themes zenburn-theme dracula-theme whole-line-or-region eyebrowse projectile-ripgrep ibuffer-vc company-fuzzy symbol-overlay js2-refactor nodejs-repl emmet-mode tagedit js2-mode npm-mode dap-mode posframe company-lsp lsp-ui lsp-mode sbt-mode scala-mode tide dante company-jedi rainbow-delimiters paredit flycheck company yasnippet ivy-hydra dashboard expand-region org-noter pdf-tools org-journal org-bullets magit counsel-projectile projectile diminish which-key modus-vivendi-theme modus-operandi-theme exec-path-from-shell use-package)))
+   '(company-lua lua-mode drag-stuff selected ryo-modal boon god-mode evil epresent dired-git-info docker docker-tramp yaml-mode dockerfile-mode json-mode auctex jest magit-popup multi-term elisp-format neotree all-the-icons-dired ivy-rich all-the-icons solaire-mode ivy-posframe diff-hl doom-themes zenburn-theme dracula-theme whole-line-or-region eyebrowse projectile-ripgrep ibuffer-vc company-fuzzy symbol-overlay js2-refactor nodejs-repl emmet-mode tagedit js2-mode npm-mode dap-mode posframe company-lsp lsp-ui lsp-mode sbt-mode scala-mode tide dante company-jedi rainbow-delimiters paredit flycheck company yasnippet ivy-hydra dashboard expand-region org-noter pdf-tools org-journal org-bullets magit counsel-projectile projectile diminish which-key modus-vivendi-theme modus-operandi-theme exec-path-from-shell use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
