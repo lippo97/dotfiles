@@ -1,0 +1,11 @@
+(defun my-prog-mode-hook ()
+  (setq compilation-scroll-output t)
+  (setq-default indent-tabs-mode nil)
+  (display-line-numbers-mode t)
+  (column-number-mode t)
+  (electric-pair-local-mode t)
+  (setq display-line-numbers-type 'relative)
+  )
+(add-hook 'prog-mode-hook 'my-prog-mode-hook)
+
+(provide 'prog-init)
