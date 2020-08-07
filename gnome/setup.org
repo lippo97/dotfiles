@@ -1,0 +1,38 @@
+* Gnome setup
+** Horizontal workspaces
+   Use Ctrl+Alt+arrows to move to previous and next workspace.
+   #+begin_src sh
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Ctrl><Alt>Right']"
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Ctrl><Alt>Left']"
+   #+end_src
+
+   #+RESULTS:
+
+** Numbered workspaces
+   Use <Super>+n to move around workspaces.
+   #+begin_src sh
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-1 "['<Super>1']"
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-2 "['<Super>2']"
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-3 "['<Super>3']"
+     gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-4 "['<Super>4']"
+   #+end_src
+
+   #+RESULTS:
+
+   Use <Super>+<Shift>+n to move windows around workspaces.
+   #+begin_src sh
+     gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-1 "['<Super><Shift>1']"
+     gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-2 "['<Super><Shift>2']"
+     gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-3 "['<Super><Shift>3']"
+     gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Super><Shift>4']"
+   #+end_src
+
+   #+RESULTS:
+
+   #+begin_src sh
+     for i in $(seq 1 9); do
+         dconf write /org/gnome/shell/keybindings/switch-to-application-$i "['']"
+     done
+   #+end_src
+
+   #+RESULTS:
