@@ -1,27 +1,63 @@
-;;; package --- Summary:
-;;; Commentary:
-(require 'org)
-;;; Code:
-(setq vc-follow-symlinks nil)
-(org-babel-load-file (expand-file-name "settings.org" user-emacs-directory))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(global-linum-mode nil)
- '(ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-top-center)))
- '(ivy-posframe-font "Source Code Pro 13")
- '(ivy-posframe-height-alist '((t . 20)))
- '(ivy-posframe-mode t nil (ivy-posframe))
- '(ivy-posframe-parameters '((internal-border-width . 10)))
- '(ivy-posframe-width 120)
- '(package-selected-packages
-   '(company-lua lua-mode drag-stuff selected ryo-modal boon god-mode evil epresent dired-git-info docker docker-tramp yaml-mode dockerfile-mode json-mode auctex jest magit-popup multi-term elisp-format neotree all-the-icons-dired ivy-rich all-the-icons solaire-mode ivy-posframe diff-hl doom-themes zenburn-theme dracula-theme whole-line-or-region eyebrowse projectile-ripgrep ibuffer-vc company-fuzzy symbol-overlay js2-refactor nodejs-repl emmet-mode tagedit js2-mode npm-mode dap-mode posframe company-lsp lsp-ui lsp-mode sbt-mode scala-mode tide dante company-jedi rainbow-delimiters paredit flycheck company yasnippet ivy-hydra dashboard expand-region org-noter pdf-tools org-journal org-bullets magit counsel-projectile projectile diminish which-key modus-vivendi-theme modus-operandi-theme exec-path-from-shell use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(defvar best-gc-cons-threshold
+  4000000
+  "Best default gc threshold value.  Should NOT be too big!")
+
+;; disable GC during startup
+(setq gc-cons-threshold most-positive-fixnum)
+
+(setq emacs-load-start-time (current-time))
+
+(defconst my-emacs-d (file-name-as-directory user-emacs-directory)
+  "Directory of emacs.d")
+
+(defconst my-lisp-dir (concat my-emacs-d "lisp")
+  "Directory of lisp")
+
+;; (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name my-lisp-dir))
+
+(require 'package-init)
+(require 'settings-init)
+(require 'modeline-init)
+(require 'theme-init)
+(require 'import-path)
+(require 'diminish-init)
+(require 'which-key-init)
+(require 'evil-init)
+(require 'hydra-init)
+(require 'general-init)
+(require 'projectile-init)
+(require 'company-init)
+(require 'flycheck-init)
+(require 'eldoc-init)
+(require 'ivy-init)
+(require 'whitespace-init)
+(require 'nerdcommenter-init)
+
+(require 'dired-init)
+(require 'eshell-init)
+(require 'all-the-icons-init)
+(require 'expand-region-init)
+
+(require 'git-init)
+(require 'lsp-init)
+
+(require 'prog-init)
+(require 'org-init)
+(require 'org-babel-init)
+(require 'elisp-init)
+(require 'scala-init)
+(require 'typescript-init)
+(require 'react-init)
+
+(require 'reformatter-init)
+
+(load (setq custom-file (expand-file-name (concat my-emacs-d "custom-set-variables.el"))) t t)
+
+(setq gc-cons-threshold best-gc-cons-threshold)
+
+(when (require 'time-date nil t)
+  (defun display-startup-echo-area-message ()
+    "")
+  (message "Emacs startup time: %f seconds."
+           (time-to-seconds (time-since emacs-load-start-time))))

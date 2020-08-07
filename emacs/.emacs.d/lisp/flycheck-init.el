@@ -18,13 +18,16 @@
     "cp" 'hydra-error-navigation/previous-error
     "cn" 'hydra-error-navigation/next-error
     )
+  (setq flycheck-check-syntax-automatically '(save mode-enable idle-change)
+        flycheck-disabled-checkers '('emacs-lisp-checkdoc))
+  ;; (flycheck-add-mode 'javascript-eslint 'js-mode)
   (define-key flycheck-error-list-mode-map (kbd "k") 'flycheck-error-list-previous-error)
   (define-key flycheck-error-list-mode-map (kbd "j") 'flycheck-error-list-next-error)
   (add-to-list 'display-buffer-alist `(,(rx bos "*Flycheck errors*" eos)
                                        (display-buffer-reuse-window display-buffer-in-side-window)
                                        (side            . bottom)
                                        (reusable-frames . visible)
-                                       (window-height   . 0.25)))
+                                       (window-height   . 0.15)))
   )
 (use-package flycheck
              :hook (prog-mode . flycheck-mode)

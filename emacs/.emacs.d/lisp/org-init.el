@@ -76,6 +76,7 @@
             "oa" 'org-agenda
             "oc" 'org-capture
             "ol" 'org-store-link
+            "oo" 'org-open-at-point
             "oi" '((lambda () (interactive) (find-file inbox-file)) :which-key "Open inbox")
             )
           (my-local-leader-def

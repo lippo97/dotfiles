@@ -19,4 +19,6 @@
 (global-set-key (kbd "C-x C-c") nil)
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
 
+(server-mode)
+
 (provide 'settings-init)

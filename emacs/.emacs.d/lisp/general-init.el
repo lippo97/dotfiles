@@ -6,7 +6,7 @@
   ;; choose space as my leader key
   (defconst my-leader "<SPC>")
   ;; choose space-m as my local mode leader key
-  (defconst my-local-leader "<SPC> m")
+  (defconst my-local-leader "<SPC> ,")
   ;; create definer
   (general-create-definer my-leader-def
     :prefix my-leader
