@@ -47,7 +47,7 @@
     (kbd "M-j") 'org-metadown
     (kbd "M-k") 'org-metaup)
 
-  (define-key evil-visual-state-map (kbd "TAB") 'indent-region)
+  (define-key evil-visual-state-map (kbd "C-\\") 'indent-region)
 
   (define-key evil-ex-completion-map (kbd "C-a") 'move-beginning-of-line)
   (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
@@ -94,6 +94,11 @@
   :config
   (setq evil-snipe-scope 'buffer
         evil-snipe-smart-case t))
+
+(use-package evil-matchit
+  :after evil
+  :diminish
+  :init (global-evil-matchit-mode t))
 
 (use-package evil-surround
   :diminish

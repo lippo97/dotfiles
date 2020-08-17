@@ -1,8 +1,9 @@
 (defun my-evil-nerd-commenter-hook ()
   (require 'general-init)
   (my-leader-def
-    "cl" 'evilnc-comment-or-uncomment-lines
-    "cL" 'evilnc-copy-and-comment-lines
+    "c" '(:ignore t :which-key "Comment stuff")
+    "ci" 'evilnc-comment-or-uncomment-lines
+    "cc" 'evilnc-copy-and-comment-lines
     ))
 
 (use-package evil-nerd-commenter

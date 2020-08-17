@@ -47,30 +47,25 @@
   )
 
 
-
-(defun setup-tide-tsx ()
-  (interactive)
-  (tide-setup)
-  (setq company-tooltip-align-annotations t
-        flycheck-idle-change-delay 2.5
-        tab-width 2
-        indent-tabs-mode nil
-        js-indent-level 2
-        typescript-indent-level 2
-        show-paren-style 'parenthesis)
-  (add-hook 'typescript-mode-hook #'tsserver-node-modules)
-  (add-hook 'flycheck-mode-hook #'eslint-node-modules)
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint))
-  (flycheck-add-next-checker 'tsx-tide '(warning . javascript-eslint))
-  (flycheck-add-next-checker 'javascript-tide '(warning . javascript-eslint))
-  (evil-define-key 'normal tide-mode-map (kbd "M-.") 'tide-jump-to-definition)
-  (evil-define-key 'normal tide-mode-map (kbd "M-?") 'tide-references)
-  (tide-hl-identifier-mode t)
-  )
-
 (use-package tide
   :defer t
+  :init
+  (defun setup-tide-tsx ()
+    (tide-setup)
+    (setq company-tooltip-align-annotations t
+          flycheck-idle-change-delay 1.5
+          tab-width 2
+          indent-tabs-mode nil
+          js-indent-level 2
+          typescript-indent-level 2
+          show-paren-style 'parenthesis)
+    (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint))
+    (flycheck-add-next-checker 'tsx-tide '(warning . javascript-eslint))
+    (flycheck-add-next-checker 'javascript-tide '(warning . javascript-eslint))
+    (evil-define-key 'normal tide-mode-map (kbd "M-.") 'tide-jump-to-definition)
+    (evil-define-key 'normal tide-mode-map (kbd "M-?") 'tide-references)
+    (tide-hl-identifier-mode t)
+    )
   )
 
 (provide 'typescript-init)

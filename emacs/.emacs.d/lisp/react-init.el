@@ -24,28 +24,29 @@
       (setq-default tide-tsserver-executable tsserver))))
 
 
-;; Use my custom version
-;; (use-package eslint-fix
-;;   :defer t
-;;   :after projectile)
-
-;; This could be huge, i just can't get it to work
-;; (use-package eslintd-fix
-;;   :defer t
-;;   :hook (js-mode . eslintd-fix-mode))
-
-(use-package js
+(use-package tide
   :defer t
-  :after flycheck
-  :ensure nil
   :init
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . js-mode))
-  (add-to-list 'flycheck-checkers 'javascript-tide)
-  (setq flycheck-checker 'javascript-tide
-        eslint-executable-name "eslint_d")
-  (add-hook 'flycheck-mode-hook #'eslint-node-modules)
-  (add-hook 'js-mode #'tsserver-node-modules)
-  :config
+  (require 'flycheck)
+  (defun setup-tide-tsx ()
+    (tide-setup)
+    (setq company-tooltip-align-annotations t
+          flycheck-idle-change-delay 1.5
+          tab-width 2
+          indent-tabs-mode nil
+          js-indent-level 2
+          typescript-indent-level 2
+          show-paren-style 'parenthesis)
+    (flycheck-add-next-checker 'typescript-tide '(warning . javascript-eslint))
+    (flycheck-add-next-checker 'tsx-tide '(warning . javascript-eslint))
+    (flycheck-add-next-checker 'javascript-tide '(warning . javascript-eslint))
+    (define-key evil-normal-state-map (kbd "M-.") 'tide-jump-to-definition)
+    ;; (evil-define-key 'normal tide-mode-map (kbd "M-.") 'tide-jump-to-definition)
+    (evil-define-key 'normal tide-mode-map (kbd "M-?") 'tide-references)
+    (tide-hl-identifier-mode t))
+  )
+
+(defun my-react-mode-hook ()
   (require 'eslint-fix)
   (require 'general-init)
   (my-local-leader-def
@@ -56,7 +57,30 @@
     "ee" 'tide-error-at-point
     "fi" 'tide-organize-imports
     "fe" 'eslint-fix
-    "fa" 'eslint-auto-fix))
+    "fa" 'eslint-auto-fix)
+  (setup-tide-tsx))
+
+(use-package typescript-mode
+  :defer t
+  :init
+  (add-hook 'typescript-mode #'tsserver-node-modules)
+  (add-hook 'flycheck-mode-hook #'eslint-node-modules)
+  (setq eslint-executable-name "eslint_d")
+  :config
+  (my-react-mode-hook))
+
+(use-package js
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . js-mode))
+  (add-to-list 'flycheck-checkers 'javascript-tide)
+  (add-hook 'js-mode #'tsserver-node-modules)
+  (add-hook 'flycheck-mode-hook #'eslint-node-modules)
+  (setq flycheck-checker 'javascript-tide
+        eslint-executable-name "eslint_d")
+  :config
+  (my-react-mode-hook)
+  )
 
 (defun eslint-auto-fix--eslint-fix-and-flycheck ()
   (eslint-fix)
@@ -80,7 +104,6 @@
 
 (add-hook 'eslint-auto-fix-hook 'eslint-auto-fix--toggle-hook)
 (add-hook 'js-mode-hook 'eslint-auto-fix)
-
 
 (provide 'react-init)
 ;;; react-init.el ends here

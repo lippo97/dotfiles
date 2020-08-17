@@ -32,20 +32,22 @@
     "xF" 'set-fill-column
     "dd" 'dired
     "gg" 'magit
-    "ee" (lambda () (interactive) (find-file (concat user-emacs-directory "init.el")))
-    )
+)
+  (my-leader-def
+    "U" '(:ignore t :which-key "User config")
+    "Uc" '((lambda () (interactive) (find-file (concat user-emacs-directory "init.el"))) :which-key "Edit Emacs configuration" )
+    "Uf" '((lambda () (interactive) (counsel-find-file (concat user-emacs-directory "lisp"))) :which-key "Find in Lisp directory")
+    "Ud" '((lambda () (interactive) (counsel-find-file "~/Dropbox/notes")) :which-key "Find in Dropbox notes"))
   (my-leader-def
     "O" '(:ignore t :which-key "Compilation")
     "Oc" 'compile
-    "Or" 'recompile
-    )
+    "Or" 'recompile)
   (my-leader-def
     "b" '(:ignore t :which-key "Buffers")
     "bk" 'kill-buffer
     "bs" 'save-buffer
     "bb" 'switch-to-buffer
-    "bo" 'switch-to-buffer-other-window
-    )
+    "bo" 'switch-to-buffer-other-window)
   (my-leader-def
     "h" '(:ignore t :which-key "Describe Emacs")
     "hf" 'describe-function
@@ -53,14 +55,12 @@
     "hm" 'describe-mode
     "hk" 'describe-key
     "ha" 'apropos-command
-    "hb" 'describe-bindings
-    )
+    "hb" 'describe-bindings)
   (my-leader-def
     "v" '(:ignore t :which-key "Version control")
     "vv" 'vc-next-action
     "vn" 'diff-hl-next-hunk
-    "vp" 'diff-hl-previous-hunk)
-  )
+    "vp" 'diff-hl-previous-hunk))
 
 (use-package general
   :init (my-general-setup))

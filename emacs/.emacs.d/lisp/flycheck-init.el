@@ -6,17 +6,19 @@
 
 (defhydra hydra-error-navigation ()
   "Error navigation"
-  ("p" previous-error "Go to the previous error")
-  ("n" next-error "Go to the next error")
+  ("p" previous-error "Go to previous error")
+  ("n" next-error "Go to next error")
   ("l" flycheck-list-errors-and-focus "Open the error list" :color blue)
   ("q" nil "Exit" :color blue)
   )
 (defun my-flycheck-mode-hook ()
   (require 'general-init)
   (my-leader-def
-    "cc" 'hydra-error-navigation/body
-    "cp" 'hydra-error-navigation/previous-error
-    "cn" 'hydra-error-navigation/next-error
+    "e"  '(:ignore t :which-key "Flycheck errors")
+    "ec" '(hydra-error-navigation/body :which-key "Error navigation hydra")
+    "ep" '(hydra-error-navigation/previous-error :which-key "Go to previous error")
+    "en" '(hydra-error-navigation/next-error :which-key "Go to next error")
+    "el" '(flycheck-list-errors :which-key "Open the error list")
     )
   (setq flycheck-check-syntax-automatically '(save mode-enable idle-change)
         flycheck-disabled-checkers '('emacs-lisp-checkdoc))
