@@ -43,8 +43,7 @@
     (define-key evil-normal-state-map (kbd "M-.") 'tide-jump-to-definition)
     ;; (evil-define-key 'normal tide-mode-map (kbd "M-.") 'tide-jump-to-definition)
     (evil-define-key 'normal tide-mode-map (kbd "M-?") 'tide-references)
-    (tide-hl-identifier-mode t))
-  )
+    (tide-hl-identifier-mode t)))
 
 (defun my-react-mode-hook ()
   (require 'eslint-fix)
@@ -71,39 +70,40 @@
 
 (use-package js
   :defer t
+  :mode ("\\.tsx\\'" . js-mode)
   :init
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . js-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . js-mode))
   (add-to-list 'flycheck-checkers 'javascript-tide)
   (add-hook 'js-mode #'tsserver-node-modules)
   (add-hook 'flycheck-mode-hook #'eslint-node-modules)
   (setq flycheck-checker 'javascript-tide
         eslint-executable-name "eslint_d")
   :config
-  (my-react-mode-hook)
-  )
+  (my-react-mode-hook))
 
-(defun eslint-auto-fix--eslint-fix-and-flycheck ()
-  (eslint-fix)
-  (flycheck-buffer))
+(use-package npm-mode
+  :custom
+  (npm-mode-command-prefix "")
+  :init
+  (require 'general-init)
+  (my-local-leader-def
+    "n" '(:ignore t :which-key "Npm")
+    "nr" '(npm-mode-npm-run :which-key "Run script")
+    "nc" '(npm-mode-npm-clean :which-key "Clean")
+    "ni" '(npm-mode-npm-install :which-key "Install dependencies")
+    "nd" '(npm-mode-npm-install-save :which-key "Install a dependency")
+    "nD" '(npm-mode-npm-install-save-dev :which-key "Install a dev dependency")
+    "nu" '(npm-mode-npm-uninstall :which-key "Uninstall dependency")
+    "nl" '(npm-mode-npm-list :which-key "List packages")
+    "nI" '(npm-mode-npm-init :which-key "Init")
+    )
+  :hook (typescript-mode js-mode web-mode))
 
-(defun eslint-auto-fix--add-hook ()
-  (add-hook 'after-save-hook 'eslint-auto-fix--eslint-fix-and-flycheck))
+(use-package eslint-auto-fix
+  :ensure nil
+  :hook (js-mode typescript-mode web-mode))
 
-(defun eslint-auto-fix--remove-hook ()
-  (remove-hook 'after-save-hook 'eslint-auto-fix--eslint-fix-and-flycheck))
-
-(defun eslint-auto-fix--toggle-hook ()
-  (if eslint-auto-fix
-    (eslint-auto-fix--add-hook)
-    (eslint-auto-fix--remove-hook)))
-
-(define-minor-mode eslint-auto-fix
-  "Toggle ESLint auto format on save."
-  :lighter " [ESL]"
-  :global nil)
-
-(add-hook 'eslint-auto-fix-hook 'eslint-auto-fix--toggle-hook)
-(add-hook 'js-mode-hook 'eslint-auto-fix)
+;; (add-hook 'js-mode-hook 'eslint-auto-fix)
 
 (provide 'react-init)
 ;;; react-init.el ends here
