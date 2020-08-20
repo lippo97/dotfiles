@@ -31,7 +31,6 @@
     "xS" 'save-some-buffers
     "xF" 'set-fill-column
     "dd" 'dired
-    "gg" 'magit
 )
   (my-leader-def
     "U" '(:ignore t :which-key "User config")
@@ -57,10 +56,11 @@
     "ha" 'apropos-command
     "hb" 'describe-bindings)
   (my-leader-def
-    "v" '(:ignore t :which-key "Version control")
-    "vv" 'vc-next-action
-    "vn" 'diff-hl-next-hunk
-    "vp" 'diff-hl-previous-hunk))
+    "g" '(:ignore t :which-key "Git version control")
+    "gg" '(magit :which-key "Open Magit")
+    "gv" '(vc-next-action :which-key "Commit current chunk")
+    "gn" '(diff-hl-next-hunk :which-key "Go to next hunk")
+    "gp" '(diff-hl-previous-hunk :which-key "Go to previous hunk")))
 
 (use-package general
   :init (my-general-setup))
