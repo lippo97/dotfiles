@@ -58,7 +58,7 @@
   (my-leader-def
     "g" '(:ignore t :which-key "Git version control")
     "gg" '(magit :which-key "Open Magit")
-    "gv" '(vc-next-action :which-key "Commit current chunk")
+    "gv" '(vc-next-action :which-key "Commit current file")
     "gn" '(diff-hl-next-hunk :which-key "Go to next hunk")
     "gp" '(diff-hl-previous-hunk :which-key "Go to previous hunk")))
 
