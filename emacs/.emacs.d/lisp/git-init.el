@@ -19,6 +19,13 @@
     (add-hook 'markdown-mode-hook 'my-diff-hl-margin-hook)
     (add-hook 'org-mode-hook 'my-diff-hl-margin-hook)
     (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+
+  (use-package git-timemachine
+    :init
+    (evil-make-overriding-map git-timemachine-mode-map 'normal)
+    (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)
+    ))
+
 
 (provide 'git-init)

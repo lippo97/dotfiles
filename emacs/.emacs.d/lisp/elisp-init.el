@@ -6,9 +6,11 @@
   (require 'general-init)
   (my-local-leader-def
     :keymaps 'emacs-lisp-mode-map
+    "e" '(:ignore t :which-key "Eval")
     "ex" 'eval-last-sexp
     "er" 'eval-region
     "eb" 'eval-buffer
+    "f" '(:ignore t :which-key "Format")
     "fb" 'elisp-format-buffer
     "fd" 'elisp-format-directory
     "ff" 'elisp-format-file
