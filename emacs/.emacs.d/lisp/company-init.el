@@ -3,7 +3,7 @@
   (setq company-minimum-prefix-length 2
         company-idle-delay 0.1
         company-tooltip-align-annotations t)
-  (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-complete-common)
+  ;; (evil-define-key 'insert company-mode-map (kbd "TAB") 'company-complete-common)
   (define-key company-active-map (kbd "ESC") nil)
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous)

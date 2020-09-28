@@ -29,6 +29,11 @@
   (require 'general-init)
   (define-key lsp-mode-map (kbd "M-n") 'my-lsp-ui-doc-scroll-up)
   (define-key lsp-mode-map (kbd "M-p") 'my-lsp-ui-doc-scroll-down)
+  (my-local-leader-def
+    "rs" 'lsp-rename
+    "hh" 'lsp-ui-doc-show
+    "ca" 'lsp-execute-code-action
+    "fi" 'lsp-organize-imports)
   )
 
 

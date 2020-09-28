@@ -22,9 +22,11 @@
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
   (use-package git-timemachine
+    :defer t
     :init
-    (evil-make-overriding-map git-timemachine-mode-map 'normal)
     (add-hook 'git-timemachine-mode-hook #'evil-normalize-keymaps)
+    :config
+    (evil-make-overriding-map git-timemachine-mode-map 'normal)
     ))
 
 

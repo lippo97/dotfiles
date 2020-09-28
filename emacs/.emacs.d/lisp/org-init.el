@@ -43,6 +43,11 @@
           ,emacs-file
           ,calendar-file
           ))
+  (evil-declare-key 'normal org-agenda-mode-map
+    (kbd "j") 'org-agenda-next-line
+    (kbd "k") 'org-agenda-previous-item
+    (kbd "l") 'org-agenda-later
+    (kbd "h") 'org-agenda-earlier)
   )
 
 (defun my-org-setup ()
@@ -78,9 +83,8 @@
             "ol" 'org-store-link
             "oo" 'org-open-at-point
             "oi" '((lambda () (interactive) (find-file inbox-file)) :which-key "Open inbox")
-            )
-          (my-local-leader-def
-            "w" 'org-refile))
+            "ow" 'org-refile
+            ))
   :config (my-org-agenda-setup))
 
 (provide 'org-init)

@@ -57,6 +57,7 @@
     "hb" 'describe-bindings)
   (my-leader-def
     "g" '(:ignore t :which-key "Git version control")
+    "gt" '(git-timemachine :which-key "Git Timemachine")
     "gg" '(magit :which-key "Open Magit")
     "gv" '(vc-next-action :which-key "Commit current file")
     "gn" '(diff-hl-next-hunk :which-key "Go to next hunk")

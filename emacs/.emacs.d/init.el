@@ -49,6 +49,7 @@
 (require 'scala-init)
 (require 'typescript-init)
 (require 'react-init)
+(require 'python-init)
 
 (require 'reformatter-init)
 

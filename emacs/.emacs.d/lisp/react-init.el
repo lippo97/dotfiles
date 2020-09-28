@@ -43,7 +43,8 @@
     (define-key evil-normal-state-map (kbd "M-.") 'tide-jump-to-definition)
     ;; (evil-define-key 'normal tide-mode-map (kbd "M-.") 'tide-jump-to-definition)
     (evil-define-key 'normal tide-mode-map (kbd "M-?") 'tide-references)
-    (tide-hl-identifier-mode t)))
+    (tide-hl-identifier-mode t)
+    (lsp-ui-mode)))
 
 (defun my-react-mode-hook ()
   (require 'eslint-fix)
