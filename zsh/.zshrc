@@ -12,9 +12,13 @@ source $ZSH_MIGRATING/modules/sudo/sudo.plugin.zsh
 setopt nomultios
 
 # Use ripgrep as default
-export FZF_DEFAULT_COMMAND='fd --type f'
+export FZF_DEFAULT_COMMAND="fd --type f"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
+# Set GOPATH
+export GOPATH="$HOME/.go"
+
 source $HOME/.environment
-export VISUAL=emacsclient
+export VISUAL="emacsclient -c -a nvim"
 export EDITOR="$VISUAL"
+#compdef ed=vim

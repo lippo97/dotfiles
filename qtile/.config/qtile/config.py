@@ -87,6 +87,7 @@ floating_layout = layout.Floating(float_rules=[
     {'wmclass': 'pavucontrol'}, # pavucontrol-applet
     {'wmclass': 'feh'}, # feh
     {'wmclass': 'gpick'},
+    {'wmclass': 'kazam'},
 ])
 auto_fullscreen = True
 focus_on_window_activation = "smart"
