@@ -1,4 +1,0 @@
-setxkbmap us
-setxkbmap -option compose:menu
-sudo /usr/local/bin/audiofix
-export PATH=$HOME/.scripts:${PATH}
