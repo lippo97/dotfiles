@@ -2,6 +2,12 @@
 
 Use GNU Stow tool to import.
 
+# Cloning
+
+``` bash
+git clone git@github.com:lippo97/dotfiles --recursive
+```
+
 ## Import a single configuration
 
 ```bash
