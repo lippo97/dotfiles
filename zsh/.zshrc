@@ -8,6 +8,7 @@ source $ZSH/oh-my-zsh.sh
 source $ZSH_MIGRATING/modules/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $ZSH_MIGRATING/modules/sudo/sudo.plugin.zsh
 source $ZSH_MIGRATING/path_loader.zsh
+source $ZSH_MIGRATING/aliases
 
 
 setopt nomultios

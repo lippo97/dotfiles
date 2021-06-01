@@ -51,7 +51,7 @@
 ;; they are implemented.
 
 (defvar-local org-capture-default-dir
-  (file-name-as-directory (concat "~/Dropbox/" "notes/")))
+  (file-name-as-directory (concat "~/Nextcloud/" "org-notes/")))
 
 (defvar-local inbox-file
   (concat org-capture-default-dir "inbox.org"))
@@ -175,13 +175,6 @@
 
 (after! evil-snipe
   (setq evil-snipe-scope 'buffer))
-
-(use-package! evil-colemak-basics
-  :after evil
-  :config
-  (setq evil-colemak-basics-rotate-t-f-j t))
-
-;; (after! evil (global-evil-colemak-basics-mode))
 
 (use-package! org-ref
     :after org
