@@ -99,6 +99,10 @@
 
 (setq org-directory org-capture-default-dir)
 
+;; Makes emacsclient open files in the main workspace
+(after! persp-mode
+  (setq persp-emacsclient-init-frame-behaviour-override "main"))
+
 (after! org-capture
   (setq org-capture-templates
         '(("r" "Read later" entry (file read-later-file)

@@ -1,1 +1,7 @@
-alias xo='xdg-open'
+#!/bin/zsh
+alias xof='xdg-open'
+alias gs='git status'
+
+function xo () {
+  nohup xdg-open $@ >/dev/null 2>&1
+}
