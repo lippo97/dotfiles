@@ -1,6 +1,8 @@
 #!/bin/zsh
 alias xof='xdg-open'
 alias gs='git status'
+alias e='emacsclient -nc'
+alias dc='docker-compose'
 
 function xo () {
   nohup xdg-open $@ >/dev/null 2>&1
