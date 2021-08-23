@@ -29,9 +29,10 @@
 
    #+RESULTS:
 
+   Remove existing bindins for Super + {1,2,3,...}
    #+begin_src sh
      for i in $(seq 1 9); do
-         dconf write /org/gnome/shell/keybindings/switch-to-application-$i "['']"
+         gsettings set org.gnome.shell.keybindings switch-to-application-$i "['']"
      done
    #+end_src
 

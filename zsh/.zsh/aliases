@@ -3,6 +3,9 @@ alias xof='xdg-open'
 alias gs='git status'
 alias e='emacsclient -nc'
 alias dc='docker-compose'
+alias vim='nvim'
+alias vi='vim'
+alias v='vim'
 
 function xo () {
   nohup xdg-open $@ >/dev/null 2>&1
