@@ -27,7 +27,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-(setq doom-theme 'doom-nord)
+(setq doom-theme 'doom-spacegrey)
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -103,17 +103,23 @@
 (after! persp-mode
   (setq persp-emacsclient-init-frame-behaviour-override "main"))
 
+(map! :map global-map
+      "<C-return>" nil)
+
+(map! :after ivy
+      :map ivy-minibuffer-map
+      "<C-return>" 'ivy-immediate-done)
+
 (after! org-capture
   (setq org-capture-templates
         '(("r" "Read later" entry (file read-later-file)
            "* TODO %? %^G" :empty-lines 1)
           ("i" "Inbox" entry (file inbox-file)
            "* %? %^G" :empty-lines 1)
-          ("t" "Task" entry (file todo-file)
-           "* TODO %? %^G \n  %U" :empty-lines 1)
+          ("e" "Emacs improvement" entry (file emacs-file)
+           "* TODO %? %^G" :empty-lines 1)
           ("I" "Idea" entry (file ideas-file)
            "* %? %^G \n  %U" :empty-lines 1)
-          ("c" "Calendar")
           ("ce" "Event or birthday" entry (file calendar-file)
            "* %? \n  %^t \n" :empty-lines 1)
           ("ca" "Appointment" entry (file calendar-file)
@@ -272,8 +278,45 @@
        
   )
 
+(after! projectile
+  (setq! projectile-create-missing-test-files t)
+  (projectile-update-project-type 'sbt
+                                  :test-suffix "Test"
+                                  :src-dir
+                                  (lambda (file-path) (projectile-complementary-dir file-path "test" "main"))
+                                  :test-dir
+                                  (lambda (file-path) (projectile-complementary-dir file-path "main" "test")))
+  (projectile-update-project-type 'npm
+                                  :related-files-fn
+                                  (list
+                                   (projectile-related-files-fn-test-with-suffix "ts" ".spec")
+                                   (projectile-related-files-fn-test-with-suffix "ts" ".test")
+                                   ))
+  )
+
+(defun my/toggle-between-implementation-and-test ()
+  (interactive)
+  ;; Detect wether it was called with universal argument
+  (if (equal current-prefix-arg nil)
+      (projectile-toggle-between-implementation-and-test)
+    (projectile-find-implementation-or-test-other-window))
+  )
+
+(map! :leader
+      :map projectile-mode-map
+      :desc "Go to implementation/test"
+      "ft" #'my/toggle-between-implementation-and-test)
+
+;; (after! yasnippet
+;;   (setq! yas-snippet-dirs)
+;;   )
+
+;; (setq! +file-templates-dir "~./.doom.d/templates")
+        (set-file-template! "\\.tsx$" :trigger "__component" :mode 'typescript-mode)
+        (set-file-template! "\\.tsx$" :mode 'typescript-mode)
+
 ;;; This is a beta
-(defun set-bigger-spacing ()
-  (setq-local default-text-properties '(line-spacing 0.15 line-height 1.15)))
-(add-hook 'text-mode-hook 'set-bigger-spacing)
-(add-hook 'prog-mode-hook 'set-bigger-spacing)
+;; (defun set-bigger-spacing ()
+;;   (setq-local default-text-properties '(line-spacing 0.15 line-height 1.15)))
+;; (add-hook 'text-mode-hook 'set-bigger-spacing)
+;; (add-hook 'prog-mode-hook 'set-bigger-spacing)

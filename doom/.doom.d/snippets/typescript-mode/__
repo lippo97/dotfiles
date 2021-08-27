@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: default
+# key: __
+# type: command
+# --
+
+(insert "__component")(yas-expand)

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: type
+# key: type
+# condition: t
+# --
+
+type $1 = {
+  $2
+}
+$0

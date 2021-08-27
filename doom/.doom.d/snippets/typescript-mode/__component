@@ -1,0 +1,9 @@
+interface ${1:`(file-name-base buffer-file-name)`}Props {
+    
+}
+
+export const $1 = ({$2}: $1Props) => (
+  <div>
+    $1
+  </div>
+);
