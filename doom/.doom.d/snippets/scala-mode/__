@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: default
+# --
+
+package ${1:`(let ((file-path (file-name-directory(buffer-file-name (current-buffer))))
+                  (project-root (concat (projectile-project-root) "src/main/scala")))
+              (file-relative-name file-path project-root)
+              )`}
