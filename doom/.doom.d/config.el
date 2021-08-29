@@ -307,13 +307,38 @@
       :desc "Go to implementation/test"
       "ft" #'my/toggle-between-implementation-and-test)
 
+
+
+
+(after! projectile
+  (defun my/scala-get-package-name-from-path ()
+    (let* ((current-file (buffer-file-name (current-buffer)))
+           (project-root (projectile-project-root))
+           (source-set (cond
+                        ((projectile-test-file-p current-file) "test")
+                        (t "main")
+                        ))
+           (source-set-absolute-path (f-join project-root
+                                             "src/"
+                                             source-set
+                                             "scala/"
+                                             ))
+           (current-file-directory (file-name-directory current-file))
+           (package-relative-path (directory-file-name (file-relative-name current-file-directory source-set-absolute-path)))
+           )
+      (s-replace "/" "." package-relative-path)
+      )
+    )
+  )
+
 ;; (after! yasnippet
 ;;   (setq! yas-snippet-dirs)
 ;;   )
 
 ;; (setq! +file-templates-dir "~./.doom.d/templates")
-        (set-file-template! "\\.tsx$" :trigger "__component" :mode 'typescript-mode)
-        (set-file-template! "\\.tsx$" :mode 'typescript-mode)
+;; (set-file-template! "\\.tsx$" :trigger "__component" :mode 'typescript-mode)
+(set-file-template! "\\.tsx$" :mode 'typescript-mode)
+(set-file-template! "\\.scala$" :mode 'scala-mode :project t)
 
 ;;; This is a beta
 ;; (defun set-bigger-spacing ()

@@ -2,7 +2,17 @@
 # name: default
 # --
 
-package ${1:`(let ((file-path (file-name-directory(buffer-file-name (current-buffer))))
-                  (project-root (concat (projectile-project-root) "src/main/scala")))
-              (file-relative-name file-path project-root)
-              )`}
+`(let ((package-name (my/scala-get-package-name-from-path)))
+      (concat "package "
+       (if (string= package-name ".")
+           "__root__"
+           package-name
+          )
+      )
+)`
+
+class ${1:`(file-name-base (buffer-file-name (current-buffer)))`} {
+  $2
+}
+
+$0
