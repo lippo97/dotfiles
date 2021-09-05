@@ -110,6 +110,12 @@
       :map ivy-minibuffer-map
       "<C-return>" 'ivy-immediate-done)
 
+(map! :after flycheck
+      :n
+      "C-j" 'flycheck-next-error
+      "C-k" 'flycheck-previous-error
+      )
+
 (after! org-capture
   (setq org-capture-templates
         '(("r" "Read later" entry (file read-later-file)
