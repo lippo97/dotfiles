@@ -186,6 +186,7 @@
 
 (after! org-roam
   (setq org-roam-directory my-org-roam-directory)
+  (setq org-roam-db-location "/home/filo/org-roam.db")
   (add-hook 'after-init-hook 'org-roam-mode)
   (require 'org-roam-protocol))
 
