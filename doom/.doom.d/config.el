@@ -75,7 +75,7 @@
   (concat org-capture-default-dir "calendar.org"))
 
 (defvar-local my-org-roam-directory
-  (file-name-as-directory "~/org-roam"))
+  (file-name-as-directory (concat "~/Nextcloud/" "org-roam/")))
 
 (defvar-local my-org-files
   `(
