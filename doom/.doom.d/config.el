@@ -182,6 +182,31 @@
 (after! org
   (setq org-ellipsis " ⤵"
         org-refile-targets (mapcar (lambda (d) `(,d :maxlevel . 1)) my-org-files))
+  (defun my/open-university-course ()
+    (interactive)
+    (let* (
+          (university-dir (concat "~/Nextcloud/" "universita/" "5"))
+          (university-files
+           (seq-filter (lambda (x) (not (or
+                                         (string-equal x ".")
+                                         (string-equal x "..")
+                                         )))
+                       (directory-files university-dir)))
+          (selected (completing-read "Select course:" university-files)))
+      (find-file (concat (file-name-as-directory university-dir) (file-name-as-directory selected) "lezioni.org"))
+    ))
+  (defun my/open-university-dir ()
+      (interactive)
+      (find-file (concat "~/Nextcloud/" "universita/" "5"))
+      )
+  (defun my/find-file-in-university ()
+      (interactive)
+      (counsel-find-file (concat "~/Nextcloud/" "universita/" "5"))
+      )
+  (map! :leader
+        :desc "Search in university"
+        "n u" #'my/find-file-in-university
+        "n U" #'my/open-university-course)
   )
 
 (after! org-roam
