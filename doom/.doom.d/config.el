@@ -99,6 +99,8 @@
 
 (setq org-directory org-capture-default-dir)
 
+(setq enable-local-variables t)
+
 ;; Makes emacsclient open files in the main workspace
 (after! persp-mode
   (setq persp-emacsclient-init-frame-behaviour-override "main"))
@@ -288,8 +290,8 @@
 \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
 
            :unnarrowed t))))
-(after! org-roam
-  (add-hook 'org-roam-mode-hook 'auto-fill-mode))
+(after! org
+  (add-hook 'org-mode-hook 'auto-fill-mode))
 
 (after! org
   (setq process-connection-type nil)

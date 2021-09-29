@@ -11,7 +11,6 @@
 
 (package! s)
 (package! groovy-mode)
-(package! evil-colemak-basics)
 
 (package! ivy-bibtex)
 (package! org-ref)
