@@ -16,8 +16,10 @@
 (package! org-ref)
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! conda)
 
 (unpin! org-roam company-org-roam)
+
 
 
 ;; To install a package directly from a remote git repo, you must specify a

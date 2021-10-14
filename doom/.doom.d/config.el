@@ -97,7 +97,7 @@
       "M-l" 'sp-forward-slurp-sexp
       "M-h" 'sp-forward-barf-sexp)
 
-(setq org-directory org-capture-default-dir)
+(setq org-directory my-org-roam-directory)
 
 (setq enable-local-variables t)
 
@@ -212,8 +212,11 @@
   )
 
 (after! org-roam
-  (setq org-roam-directory my-org-roam-directory)
-  (setq org-roam-db-location "/home/filo/org-roam.db")
+
+  (setq org-roam-directory my-org-roam-directory
+        org-roam-db-location "/home/filo/org-roam.db"
+        org-plantuml-exec-mode 'plantuml
+        )
   (add-hook 'after-init-hook 'org-roam-mode)
   (require 'org-roam-protocol))
 
@@ -341,6 +344,11 @@
       :desc "Go to implementation/test"
       "ft" #'my/toggle-between-implementation-and-test)
 
+(after! conda
+  (setq conda-env-home-directory "/home/filo/.conda"
+        conda-anaconda-home "/opt/miniconda3")
+  (add-to-list 'python-shell-completion-native-disabled-interpreters "python3" )
+  )
 
 
 
