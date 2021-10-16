@@ -350,8 +350,6 @@
   (add-to-list 'python-shell-completion-native-disabled-interpreters "python3" )
   )
 
-
-
 (after! projectile
   (defun my/scala-get-package-name-from-path ()
     (let* ((current-file (buffer-file-name (current-buffer)))
@@ -373,17 +371,6 @@
     )
   )
 
-;; (after! yasnippet
-;;   (setq! yas-snippet-dirs)
-;;   )
 
-;; (setq! +file-templates-dir "~./.doom.d/templates")
-;; (set-file-template! "\\.tsx$" :trigger "__component" :mode 'typescript-mode)
 (set-file-template! "\\.tsx$" :mode 'typescript-mode)
 (set-file-template! "\\.scala$" :mode 'scala-mode :project t)
-
-;;; This is a beta
-;; (defun set-bigger-spacing ()
-;;   (setq-local default-text-properties '(line-spacing 0.15 line-height 1.15)))
-;; (add-hook 'text-mode-hook 'set-bigger-spacing)
-;; (add-hook 'prog-mode-hook 'set-bigger-spacing)
