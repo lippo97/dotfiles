@@ -128,8 +128,6 @@
            "* TODO %? %^G" :empty-lines 1)
           ("I" "Idea" entry (file ideas-file)
            "* %? %^G \n  %U" :empty-lines 1)
-          ("ce" "Event or birthday" entry (file calendar-file)
-           "* %? \n  %^t \n" :empty-lines 1)
           ("ca" "Appointment" entry (file calendar-file)
            "* %? \n  %^t \n  ADDED: %U" :empty-lines 1)
           ))
@@ -223,76 +221,6 @@
 (after! evil-snipe
   (setq evil-snipe-scope 'buffer))
 
-(use-package! org-ref
-    :after org
-    :config
-    (setq org-ref-completion-library 'org-ref-ivy-cite
-          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-          org-ref-default-bibliography '("~/org-roam/library.bib")
-          org-ref-bibliography-notes "~/org-roam"
-          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-          org-ref-notes-directory "~/org-roam"
-          org-ref-notes-function 'orb-edit-notes
-          )
-    (map! :leader
-          :desc "Insert cite"
-          "n r C" #'org-ref-insert-link)
-
-    )
-
-(use-package! ivy-bibtex
-  :after org-ref
-  :config
-  (setq bibtex-completion-notes-path "~/org-roam/"
-        bibtex-completion-bibliography "~/org-roam/library.bib"
-        bibtex-completion-pdf-field "file"
-        bibtex-completion-pdf-symbol "⌘"
-        bibtex-completion-notes-symbol "✎"
-        bibtex-completion-notes-template-multiple-files
-        (concat
-         "#+TITLE: ${title}\n"
-         "#+ROAM_KEY: cite:${=key=}\n"
-         "* TODO Notes\n"
-         ":PROPERTIES:\n"
-         ":Custom_ID: ${=key=}\n"
-         ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-         ":AUTHOR: ${author-abbrev}\n"
-         ":JOURNAL: ${journaltitle}\n"
-         ":DATE: ${date}\n"
-         ":YEAR: ${year}\n"
-         ":DOI: ${doi}\n"
-         ":URL: ${url}\n"
-         ":END:\n\n"
-         )
-        bibtex-completion-pdf-open-function (lambda (fpath)
-                                              (call-process "evince" nil 0 nil fpath)))
-  (map! :leader
-        :desc "Search in bibtex"
-        "n b" #'ivy-bibtex)
-  )
-
- (use-package! org-roam-bibtex
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (map! :leader
-        :desc "Open org roam bibtex"
-        "n r a" #'orb-note-actions)
-  (setq org-roam-bibtex-preformat-keywords
-        '("=key=" "title" "url" "file" "author-or-editor" "keywords")
-        orb-note-actions-frontend 'hydra)
-  (setq orb-templates
-        '(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "${slug}"
-           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}
-
-- tags ::
-- keywords :: ${keywords}
-
-\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-
-           :unnarrowed t))))
 (after! org
   (add-hook 'org-mode-hook 'auto-fill-mode))
 
@@ -371,6 +299,11 @@
     )
   )
 
+(after! tide
+  (add-to-list 'compilation-error-regexp-alist
+               '("^\\[tsl\\] ERROR in \\([^ ,\n]+\\)(\\([[:digit:]]+\\),\\([[:digit:]]+\\)"
+                 1 2 3))
+  )
 
 (set-file-template! "\\.tsx$" :mode 'typescript-mode)
 (set-file-template! "\\.scala$" :mode 'scala-mode :project t)
