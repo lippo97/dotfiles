@@ -11,7 +11,7 @@
 
 (package! s)
 (package! groovy-mode)
-
+(package! modus-themes)
 (package! ivy-bibtex)
 (package! org-ref)
 (package! org-roam-bibtex
