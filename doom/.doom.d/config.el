@@ -301,6 +301,7 @@
 
 (map! :map tide-mode-map
       :n "<f2>" 'tide-rename-symbol
+      :n "M-." 'tide-fix
       )
 
 (after! tide
