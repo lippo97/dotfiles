@@ -17,6 +17,7 @@
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! conda)
+(package! consult)
 
 (unpin! org-roam company-org-roam)
 

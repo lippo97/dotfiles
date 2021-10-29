@@ -203,11 +203,22 @@
       (interactive)
       (counsel-find-file (concat "~/Nextcloud/" "universita/" "5"))
       )
-  (map! :leader
+  (defun my/launch-teams ()
+    (interactive)
+    (let ((link (car (cdr (assoc "JOIN" (org-collect-keywords '("join")))))))
+      (browse-url link)
+      ))
+  (map! :map org-mode-map
+        :leader
         :desc "Search in university"
         "n u" #'my/find-file-in-university
         "n U" #'my/open-university-course)
-  )
+  (map! :map org-mode-map
+        :localleader
+        :desc "Launch MS Teams"
+        "u t" #'my/launch-teams
+        )
+)
 
 (after! org-roam
 
@@ -222,6 +233,7 @@
   (setq evil-snipe-scope 'buffer))
 
 (after! org
+  (setq org-attach-auto-tag nil)
   (add-hook 'org-mode-hook 'auto-fill-mode))
 
 (after! org
@@ -302,6 +314,11 @@
 (map! :map tide-mode-map
       :n "<f2>" 'tide-rename-symbol
       :n "M-." 'tide-fix
+      :n "C-." 'tide-fix
+      )
+(map! :map tide-mode-map
+      :leader
+      :n "m f" '+format/buffer
       )
 
 (after! tide
