@@ -18,6 +18,17 @@
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! conda)
 (package! consult)
+(package! tree-sitter)
+(package! tree-sitter-langs)
+;; Start of temporary stuff
+;; https://github.com/hlissner/doom-emacs/issues/5667#issuecomment-948229579
+(package! gitconfig-mode
+  :recipe (:host github :repo "magit/git-modes"
+           :files ("gitconfig-mode.el")))
+(package! gitignore-mode
+  :recipe (:host github :repo "magit/git-modes"
+           :files ("gitignore-mode.el")))
+;; end of temporary stuff
 
 (unpin! org-roam company-org-roam)
 

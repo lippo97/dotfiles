@@ -321,11 +321,25 @@
       :n "m f" '+format/buffer
       )
 
-(after! tide
-  (add-to-list 'compilation-error-regexp-alist
-               '("^\\[tsl\\] ERROR in \\([^ ,\n]+\\)(\\([[:digit:]]+\\),\\([[:digit:]]+\\)"
-                 1 2 3))
+(use-package! typescript-mode
+  :defer nil
+  :init
+  (define-derived-mode typescript-tsx-mode typescript-mode "tsx")
+  :config
+  (setq typescript-indent-level 2
+        typescript-expr-indent-offset 2)
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-tsx-mode)))
+
+(use-package! tree-sitter
+  :hook ((typescript-mode . tree-sitter-hl-mode)
+         (typescript-tsx-mode . tree-sitter-hl-mode))
   )
 
-(set-file-template! "\\.tsx$" :mode 'typescript-mode)
+(use-package! tree-sitter-langs
+  :after tree-sitter
+  :config
+  (tree-sitter-require 'tsx)
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescript-tsx-mode . tsx)))
+
+(set-file-template! "\\.tsx$" :mode 'typescript-tsx-mode)
 (set-file-template! "\\.scala$" :mode 'scala-mode :project t)
