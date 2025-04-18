@@ -14,5 +14,5 @@ source $ZSH_MIGRATING/aliases
 setopt nomultios
 
 source $HOME/.environment
-export VISUAL="emacsclient -c -a nvim"
+export VISUAL="nvim"
 export EDITOR="$VISUAL"
